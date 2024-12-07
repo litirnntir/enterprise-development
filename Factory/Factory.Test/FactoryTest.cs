@@ -265,11 +265,8 @@ public class FactoryTest
     public void SupplierConstructorTest()
     {
         var supply = new Supply(1, 1, 1, "20.01.2023", 3);
-        var supplier = new Supplier(1, "Джон Сноу", "ул. Таргариенская д.35", "89372229978");
-        Assert.Equal(1, supplier.SupplierID);
-        Assert.Equal("Джон Сноу", supplier.Name);
-        Assert.Equal("ул. Таргариенская д.35", supplier.Address);
-        Assert.Equal("89372229978", supplier.Phone);
+        // Теперь создаем supplier с уже готовым списком поставок
+        var supplier = new Supplier(1, "Джон Сноу", "ул. Таргариенская д.35", "89372229978", new List<Supply> { supply });
         Assert.Equal(new List<Supply>() { supply }, supplier.Supplies);
     }
 

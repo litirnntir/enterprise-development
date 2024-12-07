@@ -5,37 +5,19 @@ using System.Globalization;
 
 namespace Factory.Model
 {
-    /// <summary>
-    /// Class describing supplying
-    /// </summary>
     public class Supply
     {
-        /// <summary>
-        /// Supply identifier
-        /// </summary>
         [Key]
         public int SupplyID { get; set; } = 0;
 
-        /// <summary>
-        /// Enterprise identifier
-        /// </summary>
         [ForeignKey("Enterprise")]
         public int EnterpriseID { get; set; } = 0;
 
-        /// <summary>
-        /// Supplier identifier
-        /// </summary>
         [ForeignKey("Supplier")]
         public int SupplierID { get; set; } = 0;
 
-        /// <summary>
-        /// Date
-        /// </summary>
         public DateTime Date { get; set; } = new DateTime(1970, 1, 1);
 
-        /// <summary>
-        /// Goods count
-        /// </summary>
         public int Quantity { get; set; } = 0;
 
         public Supply() { }
@@ -47,6 +29,24 @@ namespace Factory.Model
             SupplierID = supplierID;
             Date = DateTime.ParseExact(date, "dd.MM.yyyy", CultureInfo.InvariantCulture);
             Quantity = quantity;
+        }
+
+        public override bool Equals(object? obj)
+        {
+            if (obj is Supply other)
+            {
+                return SupplyID == other.SupplyID &&
+                       EnterpriseID == other.EnterpriseID &&
+                       SupplierID == other.SupplierID &&
+                       Date == other.Date &&
+                       Quantity == other.Quantity;
+            }
+            return false;
+        }
+
+        public override int GetHashCode()
+        {
+            return HashCode.Combine(SupplyID, EnterpriseID, SupplierID, Date, Quantity);
         }
     }
 }
