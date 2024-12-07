@@ -280,7 +280,7 @@ public class FactoryTest
         Assert.Equal(1, supply.SupplyID);
         Assert.Equal(1, supply.EnterpriseID);
         Assert.Equal(2, supply.SupplierID);
-        Assert.Equal(DateTime.Parse("20.01.2023"), supply.Date);
+        Assert.Equal(new DateTime(2023, 1, 20), supply.Date);
         Assert.Equal(3, supply.Quantity);
     }
 
