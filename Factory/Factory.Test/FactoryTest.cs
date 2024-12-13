@@ -1,6 +1,9 @@
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using Xunit;
 
 namespace Factory.Test
@@ -48,6 +51,54 @@ namespace Factory.Test
     }
 
     /// <summary>
+    /// Пример модели "Поставка"
+    /// </summary>
+    public class Supply
+    {
+        [Key]
+        public int SupplyID { get; set; } = 0;
+
+        [ForeignKey("Enterprise")]
+        public int EnterpriseID { get; set; } = 0;
+
+        [ForeignKey("Supplier")]
+        public int SupplierID { get; set; } = 0;
+
+        public DateTime Date { get; set; } = new DateTime(1970, 1, 1);
+
+        public int Quantity { get; set; } = 0;
+
+        public Supply() { }
+
+        public Supply(int supplyID, int enterpriseID, int supplierID, string date, int quantity)
+        {
+            SupplyID = supplyID;
+            EnterpriseID = enterpriseID;
+            SupplierID = supplierID;
+            Date = DateTime.ParseExact(date, "dd.MM.yyyy", CultureInfo.InvariantCulture);
+            Quantity = quantity;
+        }
+
+        public override bool Equals(object? obj)
+        {
+            if (obj is Supply other)
+            {
+                return SupplyID == other.SupplyID &&
+                       EnterpriseID == other.EnterpriseID &&
+                       SupplierID == other.SupplierID &&
+                       Date == other.Date &&
+                       Quantity == other.Quantity;
+            }
+            return false;
+        }
+
+        public override int GetHashCode()
+        {
+            return HashCode.Combine(SupplyID, EnterpriseID, SupplierID, Date, Quantity);
+        }
+    }
+
+    /// <summary>
     /// Пример модели "Поставщик"
     /// </summary>
     public class Supplier
@@ -87,36 +138,6 @@ namespace Factory.Test
     }
 
     /// <summary>
-    /// Пример модели "Поставка"
-    /// </summary>
-    public class Supply
-    {
-        public int SupplyID { get; set; }
-        public int EnterpriseID { get; set; }
-        public int SupplierID { get; set; }
-        public DateTime Date { get; set; }
-        public int Quantity { get; set; }
-
-        public Supply()
-        {
-            SupplyID = 0;
-            EnterpriseID = 0;
-            SupplierID = 0;
-            Date = new DateTime(1970, 1, 1);
-            Quantity = 0;
-        }
-
-        public Supply(int supplyID, int enterpriseID, int supplierID, string date, int quantity)
-        {
-            SupplyID = supplyID;
-            EnterpriseID = enterpriseID;
-            SupplierID = supplierID;
-            Date = DateTime.Parse(date); // Или другой способ парсинга, если нужно
-            Quantity = quantity;
-        }
-    }
-
-    /// <summary>
     /// Пример модели "Предприятие"
     /// </summary>
     public class Enterprise
@@ -129,7 +150,7 @@ namespace Factory.Test
         public string TelephoneNumber { get; set; }
         public int OwnershipFormID { get; set; }
         public int EmployeesCount { get; set; }
-        public int TotalArea { get; set; }
+        public double TotalArea { get; set; }
         public List<Supply> Supplies { get; set; }
 
         public Enterprise()
@@ -142,13 +163,13 @@ namespace Factory.Test
             TelephoneNumber = string.Empty;
             OwnershipFormID = 0;
             EmployeesCount = 0;
-            TotalArea = 0;
+            TotalArea = 0.0;
             Supplies = new List<Supply>();
         }
 
         public Enterprise(int enterpriseID, string registrationNumber, int typeID, string name,
                           string address, string telephoneNumber, int ownershipFormID,
-                          int employeesCount, int totalArea)
+                          int employeesCount, double totalArea)
         {
             EnterpriseID = enterpriseID;
             RegistrationNumber = registrationNumber;
@@ -213,11 +234,11 @@ namespace Factory.Test
             // Список предприятий
             Enterprises = new List<Enterprise>()
             {
-                new Enterprise(1, "1036300446093", 6, "СТАН",    "ул.22 партъезда д.7а",  "88469926984",   1, 100, 1000),
-                new Enterprise(2, "1156313028981", 6, "ЗГМ",     "ул.22 партъезда д.10а", "88462295931",   2, 150, 1500),
-                new Enterprise(3, "1116318009510", 4, "ВЗМК",    "ул.Балаковская д.6а",   "884692007711",  2, 200, 2000),
-                new Enterprise(4, "1026300767899", 2, "АВИАКОР", "ул.Земеца д.32",        "88463720888",   3, 250, 2500),
-                new Enterprise(5, "1026301697487", 6, "ЭКРАН",   "ул.Кирова д.24",        "88469983785",   4, 130, 1300),
+                new Enterprise(1, "1036300446093", 6, "СТАН",    "ул.22 партъезда д.7а",  "88469926984",   1, 100, 1000.0),
+                new Enterprise(2, "1156313028981", 6, "ЗГМ",     "ул.22 партъезда д.10а", "88462295931",   2, 150, 1500.0),
+                new Enterprise(3, "1116318009510", 4, "ВЗМК",    "ул.Балаковская д.6а",   "884692007711",  2, 200, 2000.0),
+                new Enterprise(4, "1026300767899", 2, "АВИАКОР", "ул.Земеца д.32",        "88463720888",   3, 250, 2500.0),
+                new Enterprise(5, "1026301697487", 6, "ЭКРАН",   "ул.Кирова д.24",        "88469983785",   4, 130, 1300.0),
             };
 
             // Список поставщиков
@@ -327,11 +348,11 @@ namespace Factory.Test
                          };
 
             // Проверяем typeID == 6 -> 5 поставок
-            Assert.Equal(5, result.FirstOrDefault(x => x.IndustryType == 6).SupplierCount);
+            Assert.Equal(5, result.FirstOrDefault(x => x.IndustryType == 6)?.SupplierCount ?? 0);
             // Проверяем typeID == 4 -> 1 поставка
-            Assert.Equal(1, result.FirstOrDefault(x => x.IndustryType == 4).SupplierCount);
+            Assert.Equal(1, result.FirstOrDefault(x => x.IndustryType == 4)?.SupplierCount ?? 0);
             // Проверяем typeID == 2 -> 2 поставки
-            Assert.Equal(2, result.FirstOrDefault(x => x.IndustryType == 2).SupplierCount);
+            Assert.Equal(2, result.FirstOrDefault(x => x.IndustryType == 2)?.SupplierCount ?? 0);
         }
 
         /// <summary>
@@ -356,7 +377,7 @@ namespace Factory.Test
 
         /// <summary>
         /// Selecting supplier who delivered max quantity of goods 
-        /// from 01.01.2023 to 01.03.2023 (в коде используем 30.01.2023, как в примере)
+        /// from 01.01.2023 to 30.01.2023
         /// </summary>
         [Fact]
         public void RequestTest6()
@@ -405,7 +426,7 @@ namespace Factory.Test
         public void EnterpriseConstructorTest()
         {
             var supply = new Supply(1, 1, 1, "20.01.2023", 3);
-            var enterprise = new Enterprise(1, "1036300446093", 6, "СТАН", "ул.22 партъезда д.7а", "88469926984", 1, 100, 1000);
+            var enterprise = new Enterprise(1, "1036300446093", 6, "СТАН", "ул.22 партъезда д.7а", "88469926984", 1, 100, 1000.0);
 
             Assert.Equal(1, enterprise.EnterpriseID);
             Assert.Equal("1036300446093", enterprise.RegistrationNumber);
@@ -415,7 +436,7 @@ namespace Factory.Test
             Assert.Equal("88469926984", enterprise.TelephoneNumber);
             Assert.Equal(1, enterprise.OwnershipFormID);
             Assert.Equal(100, enterprise.EmployeesCount);
-            Assert.Equal(1000, enterprise.TotalArea);
+            Assert.Equal(1000.0, enterprise.TotalArea);
         }
 
         /// <summary>
@@ -486,7 +507,7 @@ namespace Factory.Test
             Assert.Equal(string.Empty, enterprise.TelephoneNumber);
             Assert.Equal(0, enterprise.OwnershipFormID);
             Assert.Equal(0, enterprise.EmployeesCount);
-            Assert.Equal(0, enterprise.TotalArea);
+            Assert.Equal(0.0, enterprise.TotalArea);
             Assert.Empty(enterprise.Supplies);
         }
 
