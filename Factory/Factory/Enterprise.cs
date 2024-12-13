@@ -9,61 +9,79 @@ namespace Factory.Model;
 public class Enterprise
 {
     /// <summary>
-    /// Enterprise Identifier
+    /// Enterprise Identifier (Primary Key)
     /// </summary>
     [Key]
-    public int EnterpriseID { get; set; } = 0;
+    public int EnterpriseID { get; set; }
 
     /// <summary>
     /// RegistrationNumber
     /// </summary>
+    [Required] // строка не должна быть null
     public string RegistrationNumber { get; set; } = string.Empty;
 
     /// <summary>
     /// Industry Type ID
     /// </summary>
+    [Required]
     [ForeignKey("TypeIndustry")]
-    public int TypeID { get; set; } = 0;
+    public int TypeID { get; set; }
 
     /// <summary>
     /// Factory name
     /// </summary>
+    [Required]
     public string Name { get; set; } = string.Empty;
 
     /// <summary>
-    /// Address 
+    /// Address
     /// </summary>
+    [Required]
     public string Address { get; set; } = string.Empty;
 
     /// <summary>
     /// Telephone number
     /// </summary>
+    [Required]
     public string TelephoneNumber { get; set; } = string.Empty;
 
     /// <summary>
     /// Ownership form ID
     /// </summary>
+    [Required]
     [ForeignKey("OwnershipForm")]
-    public int OwnershipFormID { get; set; } = 0;
+    public int OwnershipFormID { get; set; }
 
     /// <summary>
     /// Employees count
     /// </summary>
-    public int EmployeesCount { get; set; } = 0;
+    [Required]
+    public int EmployeesCount { get; set; }
 
     /// <summary>
     /// Total Area
     /// </summary>
-    public double TotalArea { get; set; } = 0.0;
+    [Required]
+    public double TotalArea { get; set; }
 
     /// <summary>
     /// List of supplies
     /// </summary>
-    public List<Supply> Supplies { get; set; } = null!;
+    [Required]
+    public List<Supply> Supplies { get; set; } = new();  // Инициализируем пустым списком
 
     public Enterprise() { }
 
-    public Enterprise(int enterpriseID, string registrationNumber, int typeID, string name, string address, string telephoneNumber, int ownershipFormID, int employeesCount, double totalArea)
+    public Enterprise(
+        int enterpriseID,
+        string registrationNumber,
+        int typeID,
+        string name,
+        string address,
+        string telephoneNumber,
+        int ownershipFormID,
+        int employeesCount,
+        double totalArea)
     {
         EnterpriseID = enterpriseID;
         RegistrationNumber = registrationNumber;
