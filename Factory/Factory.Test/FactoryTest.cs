@@ -226,6 +226,7 @@ namespace Factory.Test
             Assert.Single(supplier.Supplies);
             Assert.Equal(supply, supplier.Supplies[0]);
         }
+        
 
         /// <summary>
         /// Тест конструктора по умолчанию Supply
