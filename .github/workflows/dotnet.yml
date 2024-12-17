@@ -37,4 +37,6 @@ jobs:
         dotnet build Factory/Factory.Test/Factory.Test.csproj --no-restore
 
     - name: Test
-      run: dotnet test Factory/Factory.Test/Factory.Test.csproj --no-build --verbosity normal
+      run: |
+        export DOTNET_SYSTEM_GLOBALIZATION_INVARIANT=false
+        dotnet test Factory/Factory.Test/Factory.Test.csproj --no-build --verbosity normal
