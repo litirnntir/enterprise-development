@@ -5,28 +5,15 @@ on:
     branches: [ "main" ]
   pull_request:
     branches: [ "main" ]
-  
+
 jobs:
   build:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v4name: build and test
+      - uses: actions/checkout@v4  # Шаг: выкачиваем репозиторий
 
-on:
-  push:
-    branches: [ "main" ]
-  pull_request:
-    branches: [ "main" ]
-  
-jobs:
-  build:
-    runs-on: ubuntu-latest
-
-    steps:
-      - uses: actions/checkout@v4
-
-     
+      # 1. Устанавливаем русскую локаль и ICU
       - name: Install RU locale & ICU
         run: |
           sudo apt-get update
@@ -34,11 +21,13 @@ jobs:
           sudo locale-gen ru_RU.UTF-8
           sudo update-locale LANG=ru_RU.UTF-8
 
+      # 2. Настраиваем .NET 8.0.x
       - name: Setup .NET
         uses: actions/setup-dotnet@v4
         with:
           dotnet-version: 8.0.x
 
+      # 3. Отладочная информация — какие файлы есть в репо
       - name: List directories for debugging
         run: |
           echo "Current directory:"
@@ -46,61 +35,28 @@ jobs:
           echo "Listing all files recursively:"
           ls -R
 
+      # 4. Восстанавливаем зависимости (Restore)
       - name: Restore dependencies
         run: |
           export LANG=ru_RU.UTF-8
           export LC_ALL=ru_RU.UTF-8
           export DOTNET_SYSTEM_GLOBALIZATION_INVARIANT=false
-
           dotnet restore Factory/Factory/Factory.Model.csproj
           dotnet restore Factory/Factory.Test/Factory.Test.csproj
 
+      # 5. Сборка (Build)
       - name: Build
         run: |
           export LANG=ru_RU.UTF-8
           export LC_ALL=ru_RU.UTF-8
           export DOTNET_SYSTEM_GLOBALIZATION_INVARIANT=false
-
           dotnet build Factory/Factory/Factory.Model.csproj --no-restore
           dotnet build Factory/Factory.Test/Factory.Test.csproj --no-restore
 
+      # 6. Запуск тестов (Test)
       - name: Test
         run: |
           export LANG=ru_RU.UTF-8
           export LC_ALL=ru_RU.UTF-8
           export DOTNET_SYSTEM_GLOBALIZATION_INVARIANT=false
-
           dotnet test Factory/Factory.Test/Factory.Test.csproj --no-build --verbosity normal
-
-    - name: List directories for debugging
-      run: |
-        echo "Current directory:"
-        pwd
-        echo "Listing all files recursively:"
-        ls -R
-
-    - name: Setup .NET
-      uses: actions/setup-dotnet@v4
-      with:
-        dotnet-version: 8.0.x
-
-    # Устанавливаем ICU (libicu-dev) для полноценной работы с локалями и Unicode:
-    - name: Install ICU
-      run: |
-        sudo apt-get update
-        sudo apt-get install -y libicu-dev
-
-    - name: Restore dependencies
-      run: |
-        dotnet restore Factory/Factory/Factory.Model.csproj
-        dotnet restore Factory/Factory.Test/Factory.Test.csproj
-
-    - name: Build
-      run: |
-        dotnet build Factory/Factory/Factory.Model.csproj --no-restore
-        dotnet build Factory/Factory.Test/Factory.Test.csproj --no-restore
-
-    - name: Test
-      run: |
-        export DOTNET_SYSTEM_GLOBALIZATION_INVARIANT=false
-        dotnet test Factory/Factory.Test/Factory.Test.csproj --no-build --verbosity normal
