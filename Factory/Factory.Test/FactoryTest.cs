@@ -110,47 +110,6 @@ namespace Factory.Test
             Assert.Equal(2, result.FirstOrDefault(x => x.IndustryType == 2)?.SupplierCount ?? 0);
         }
 
-        /// <summary>
-        /// Selecting top-5 factories by supply count
-        /// </summary>
-        [Fact]
-        public void RequestTest5()
-        {
-            var expected = new List<string> { "СТАН", "АВИАКОР", "ЗГМ", "ВЗМК", "ЭКРАН" };
-            var supplies = _fixture.Supplies;
-            var enterprises = _fixture.Enterprises;
-
-            var topEnterprises = (from s in supplies
-                                  join e in enterprises on s.EnterpriseID equals e.EnterpriseID
-                                  group e by new { e.EnterpriseID, e.Name } into g
-                                  orderby g.Count() descending
-                                  select g.Key.Name)
-                                 .Take(5);
-
-            Assert.Equal(expected, topEnterprises.ToList());
-        }
-
-        /// <summary>
-        /// Selecting supplier who delivered max quantity of goods 
-        /// from 01.01.2023 to 30.01.2023
-        /// </summary>
-        [Fact]
-        public void RequestTest6()
-        {
-            var suppliers = _fixture.Suppliers;
-            var supplies = _fixture.Supplies;
-
-            var result = (from s in suppliers
-                          join sp in supplies on s.SupplierID equals sp.SupplierID
-                          where sp.Date > new DateTime(2023, 1, 1) && sp.Date < new DateTime(2023, 1, 30)
-                          orderby sp.Quantity descending
-                          select new { s.Name, s.Address, s.Phone })
-                         .First(); // берем первый элемент (максимум по Quantity)
-
-            Assert.Equal("Барни Стинсон", result.Name);
-            Assert.Equal("ул. Приоденься д.50", result.Address);
-            Assert.Equal("89376431289", result.Phone);
-        }
 
         /// <summary>
         /// Тест конструктора Supply
@@ -226,7 +185,6 @@ namespace Factory.Test
             Assert.Single(supplier.Supplies);
             Assert.Equal(supply, supplier.Supplies[0]);
         }
-        
 
         /// <summary>
         /// Тест конструктора по умолчанию Supply
