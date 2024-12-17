@@ -1,258 +1,10 @@
 using System;
 using System.Collections.Generic;
-using System.Globalization;
 using System.Linq;
-using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
 using Xunit;
 
 namespace Factory.Test
 {
-    /// <summary>
-    /// Пример модели "Тип индустрии"
-    /// </summary>
-    public class TypeIndustry
-    {
-        public int TypeIndustryID { get; set; }
-        public string Name { get; set; }
-
-        public TypeIndustry()
-        {
-            TypeIndustryID = 0;
-            Name = string.Empty;
-        }
-
-        public TypeIndustry(int id, string name)
-        {
-            TypeIndustryID = id;
-            Name = name;
-        }
-    }
-
-    /// <summary>
-    /// Пример модели "Форма собственности"
-    /// </summary>
-    public class OwnershipForm
-    {
-        public int OwnershipFormID { get; set; }
-        public string Name { get; set; }
-
-        public OwnershipForm()
-        {
-            OwnershipFormID = 0;
-            Name = string.Empty;
-        }
-
-        public OwnershipForm(int id, string name)
-        {
-            OwnershipFormID = id;
-            Name = name;
-        }
-    }
-
-    /// <summary>
-    /// Пример модели "Поставка"
-    /// </summary>
-    public class Supply
-    {
-        [Key]
-        public int SupplyID { get; set; } = 0;
-
-        [ForeignKey("Enterprise")]
-        public int EnterpriseID { get; set; } = 0;
-
-        [ForeignKey("Supplier")]
-        public int SupplierID { get; set; } = 0;
-
-        public DateTime Date { get; set; } = new DateTime(1970, 1, 1);
-
-        public int Quantity { get; set; } = 0;
-
-        public Supply() { }
-
-        public Supply(int supplyID, int enterpriseID, int supplierID, string date, int quantity)
-        {
-            SupplyID = supplyID;
-            EnterpriseID = enterpriseID;
-            SupplierID = supplierID;
-            Date = DateTime.ParseExact(date, "dd.MM.yyyy", CultureInfo.InvariantCulture);
-            Quantity = quantity;
-        }
-
-        public override bool Equals(object? obj)
-        {
-            if (obj is Supply other)
-            {
-                return SupplyID == other.SupplyID &&
-                       EnterpriseID == other.EnterpriseID &&
-                       SupplierID == other.SupplierID &&
-                       Date == other.Date &&
-                       Quantity == other.Quantity;
-            }
-            return false;
-        }
-
-        public override int GetHashCode()
-        {
-            return HashCode.Combine(SupplyID, EnterpriseID, SupplierID, Date, Quantity);
-        }
-    }
-
-    /// <summary>
-    /// Пример модели "Поставщик"
-    /// </summary>
-    public class Supplier
-    {
-        public int SupplierID { get; set; }
-        public string Name { get; set; }
-        public string Address { get; set; }
-        public string Phone { get; set; }
-        public List<Supply> Supplies { get; set; }
-
-        public Supplier()
-        {
-            SupplierID = 0;
-            Name = string.Empty;
-            Address = string.Empty;
-            Phone = string.Empty;
-            Supplies = new List<Supply>();
-        }
-
-        public Supplier(int id, string name, string address, string phone)
-        {
-            SupplierID = id;
-            Name = name;
-            Address = address;
-            Phone = phone;
-            Supplies = new List<Supply>();
-        }
-
-        public Supplier(int id, string name, string address, string phone, List<Supply> supplies)
-        {
-            SupplierID = id;
-            Name = name;
-            Address = address;
-            Phone = phone;
-            Supplies = supplies;
-        }
-    }
-
-    /// <summary>
-    /// Пример модели "Предприятие"
-    /// </summary>
-    public class Enterprise
-    {
-        public int EnterpriseID { get; set; }
-        public string RegistrationNumber { get; set; }
-        public int TypeID { get; set; }
-        public string Name { get; set; }
-        public string Address { get; set; }
-        public string TelephoneNumber { get; set; }
-        public int OwnershipFormID { get; set; }
-        public int EmployeesCount { get; set; }
-        public double TotalArea { get; set; }
-        public List<Supply> Supplies { get; set; }
-
-        public Enterprise()
-        {
-            EnterpriseID = 0;
-            RegistrationNumber = string.Empty;
-            TypeID = 0;
-            Name = string.Empty;
-            Address = string.Empty;
-            TelephoneNumber = string.Empty;
-            OwnershipFormID = 0;
-            EmployeesCount = 0;
-            TotalArea = 0.0;
-            Supplies = new List<Supply>();
-        }
-
-        public Enterprise(int enterpriseID, string registrationNumber, int typeID, string name,
-                          string address, string telephoneNumber, int ownershipFormID,
-                          int employeesCount, double totalArea)
-        {
-            EnterpriseID = enterpriseID;
-            RegistrationNumber = registrationNumber;
-            TypeID = typeID;
-            Name = name;
-            Address = address;
-            TelephoneNumber = telephoneNumber;
-            OwnershipFormID = ownershipFormID;
-            EmployeesCount = employeesCount;
-            TotalArea = totalArea;
-            Supplies = new List<Supply>();
-        }
-    }
-
-    /// <summary>
-    /// Фикстура: единый контекст, расшариваемый между тестами. 
-    /// В конструкторе создаём все необходимые списки.
-    /// </summary>
-    public class FactoryContextFixture
-    {
-        public List<TypeIndustry> Types { get; }
-        public List<OwnershipForm> Ownerships { get; }
-        public List<Supply> Supplies { get; }
-        public List<Enterprise> Enterprises { get; }
-        public List<Supplier> Suppliers { get; }
-
-        public FactoryContextFixture()
-        {
-            // Список видов индустрии
-            Types = new List<TypeIndustry>()
-            {
-                new TypeIndustry(1, "Cельское хозяйство"),
-                new TypeIndustry(2, "Транспорт"),
-                new TypeIndustry(3, "Легкая промышленность"),
-                new TypeIndustry(4, "Тяжелая промышленность"),
-                new TypeIndustry(5, "Строительство"),
-                new TypeIndustry(6, "Материально - техническое снабжение")
-            };
-
-            // Список форм собственности
-            Ownerships = new List<OwnershipForm>()
-            {
-                new OwnershipForm(1, "ЗАО"),
-                new OwnershipForm(2, "ООО"),
-                new OwnershipForm(3, "АО"),
-                new OwnershipForm(4, "ОАО")
-            };
-
-            // Список поставок
-            Supplies = new List<Supply>()
-            {
-                new Supply(1, 1, 1, "20.01.2023", 3),  // СТАН - Артур
-                new Supply(2, 1, 2, "31.10.2022", 5),  // СТАН - Чендлер
-                new Supply(3, 3, 3, "14.08.2022", 1),  // ВЗМК - Барни
-                new Supply(4, 4, 4, "05.02.2023", 10), // АВИАКОР - Джон
-                new Supply(5, 2, 5, "27.02.2023", 6),  // ЗГМ - Райан
-                new Supply(6, 5, 5, "13.01.2023", 2),  // ЭКРАН - Райан
-                new Supply(7, 4, 3, "04.01.2023", 12), // АВИАКОР - Барни
-                new Supply(8, 2, 2, "09.12.2022", 4)   // ЗГМ - Чендлер
-            };
-
-            // Список предприятий
-            Enterprises = new List<Enterprise>()
-            {
-                new Enterprise(1, "1036300446093", 6, "СТАН",    "ул.22 партъезда д.7а",  "88469926984",   1, 100, 1000.0),
-                new Enterprise(2, "1156313028981", 6, "ЗГМ",     "ул.22 партъезда д.10а", "88462295931",   2, 150, 1500.0),
-                new Enterprise(3, "1116318009510", 4, "ВЗМК",    "ул.Балаковская д.6а",   "884692007711",  2, 200, 2000.0),
-                new Enterprise(4, "1026300767899", 2, "АВИАКОР", "ул.Земеца д.32",        "88463720888",   3, 250, 2500.0),
-                new Enterprise(5, "1026301697487", 6, "ЭКРАН",   "ул.Кирова д.24",        "88469983785",   4, 130, 1300.0),
-            };
-
-            // Список поставщиков
-            Suppliers = new List<Supplier>()
-            {
-                new Supplier(1, "Артур Пирожков",  "ул. Зацепильная д.42",    "89375550203"),
-                new Supplier(2, "Чендлер Бинг",   "ул. Центральная д.1",     "89370101010"),
-                new Supplier(3, "Барни Стинсон",  "ул. Приоденься д.50",     "89376431289"),
-                new Supplier(4, "Джон Сноу",      "ул. Таргариенская д.35",  "89372229978"),
-                new Supplier(5, "Райан Гослинг",  "ул. Лалаленд д.14",       "89371234567")
-            };
-        }
-    }
-
     /// <summary>
     /// Тестовый класс, использующий IClassFixture для шаринга контекста (FactoryContextFixture).
     /// </summary>
@@ -398,7 +150,21 @@ namespace Factory.Test
         }
 
         /// <summary>
-        /// TypeIndustry constructor with parameters test
+        /// Тест конструктора Supply
+        /// </summary>
+        [Fact]
+        public void SupplyConstructorTest()
+        {
+            var supply = new Supply(1, 1, 2, "20.01.2023", 3);
+            Assert.Equal(1, supply.SupplyID);
+            Assert.Equal(1, supply.EnterpriseID);
+            Assert.Equal(2, supply.SupplierID);
+            Assert.Equal(new DateTime(2023, 1, 20), supply.Date);
+            Assert.Equal(3, supply.Quantity);
+        }
+
+        /// <summary>
+        /// Тест конструктора TypeIndustry
         /// </summary>
         [Fact]
         public void TypeConstructoryTest()
@@ -409,7 +175,7 @@ namespace Factory.Test
         }
 
         /// <summary>
-        /// Ownership Form constructor with parameters test
+        /// Тест конструктора OwnershipForm
         /// </summary>
         [Fact]
         public void OwnershipConstructoryTest()
@@ -420,13 +186,14 @@ namespace Factory.Test
         }
 
         /// <summary>
-        /// Enterprise constructor with parameters test
+        /// Тест конструктора Enterprise
         /// </summary>
         [Fact]
         public void EnterpriseConstructorTest()
         {
-            var supply = new Supply(1, 1, 1, "20.01.2023", 3);
-            var enterprise = new Enterprise(1, "1036300446093", 6, "СТАН", "ул.22 партъезда д.7а", "88469926984", 1, 100, 1000.0);
+            var enterprise = new Enterprise(1, "1036300446093", 6, "СТАН",
+                                            "ул.22 партъезда д.7а", "88469926984",
+                                            1, 100, 1000.0);
 
             Assert.Equal(1, enterprise.EnterpriseID);
             Assert.Equal("1036300446093", enterprise.RegistrationNumber);
@@ -437,10 +204,11 @@ namespace Factory.Test
             Assert.Equal(1, enterprise.OwnershipFormID);
             Assert.Equal(100, enterprise.EmployeesCount);
             Assert.Equal(1000.0, enterprise.TotalArea);
+            Assert.Empty(enterprise.Supplies);
         }
 
         /// <summary>
-        /// Supplier constructor with parameters test
+        /// Тест конструктора Supplier
         /// </summary>
         [Fact]
         public void SupplierConstructorTest()
@@ -457,79 +225,10 @@ namespace Factory.Test
         }
 
         /// <summary>
-        /// Supply constructor with parameters test
+        /// Тест конструктора по умолчанию Supply
         /// </summary>
         [Fact]
-        public void SupplyConstructorTest()
-        {
-            var supply = new Supply(1, 1, 2, "20.01.2023", 3);
-            Assert.Equal(1, supply.SupplyID);
-            Assert.Equal(1, supply.EnterpriseID);
-            Assert.Equal(2, supply.SupplierID);
-            Assert.Equal(new DateTime(2023, 1, 20), supply.Date);
-            Assert.Equal(3, supply.Quantity);
-        }
-
-        /// <summary>
-        /// TypeIndustry default constructor test
-        /// </summary>
-        [Fact]
-        public void TDefaultConstructorTest()
-        {
-            var type = new TypeIndustry();
-            Assert.Equal(0, type.TypeIndustryID);
-            Assert.Equal(string.Empty, type.Name);
-        }
-
-        /// <summary>
-        /// Ownership Form default constructor test
-        /// </summary>
-        [Fact]
-        public void ODefaultConstructorTest()
-        {
-            var ownership = new OwnershipForm();
-            Assert.Equal(0, ownership.OwnershipFormID);
-            Assert.Equal(string.Empty, ownership.Name);
-        }
-
-        /// <summary>
-        /// Enterprise default constructor test
-        /// </summary>
-        [Fact]
-        public void EDefaultConstructorTest()
-        {
-            var enterprise = new Enterprise();
-            Assert.Equal(0, enterprise.EnterpriseID);
-            Assert.Equal(string.Empty, enterprise.RegistrationNumber);
-            Assert.Equal(0, enterprise.TypeID);
-            Assert.Equal(string.Empty, enterprise.Name);
-            Assert.Equal(string.Empty, enterprise.Address);
-            Assert.Equal(string.Empty, enterprise.TelephoneNumber);
-            Assert.Equal(0, enterprise.OwnershipFormID);
-            Assert.Equal(0, enterprise.EmployeesCount);
-            Assert.Equal(0.0, enterprise.TotalArea);
-            Assert.Empty(enterprise.Supplies);
-        }
-
-        /// <summary>
-        /// Supplier default constructor test
-        /// </summary>
-        [Fact]
-        public void SDefaultConstructorTest()
-        {
-            var supplier = new Supplier();
-            Assert.Equal(0, supplier.SupplierID);
-            Assert.Equal(string.Empty, supplier.Name);
-            Assert.Equal(string.Empty, supplier.Address);
-            Assert.Equal(string.Empty, supplier.Phone);
-            Assert.Empty(supplier.Supplies);
-        }
-
-        /// <summary>
-        /// Supply default constructor test
-        /// </summary>
-        [Fact]
-        public void SPDefaultConstructorTest()
+        public void SupplyDefaultConstructorTest()
         {
             var supply = new Supply();
             Assert.Equal(0, supply.SupplyID);
