@@ -26,7 +26,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      # Ставим локали и libicu-dev (ICU) для корректной работы .NET с Unicode и рускими символами
+     
       - name: Install RU locale & ICU
         run: |
           sudo apt-get update
