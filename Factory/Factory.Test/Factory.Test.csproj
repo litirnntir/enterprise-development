@@ -20,8 +20,5 @@
 	</ItemGroup>
 
 
-	<ItemGroup>
-		<ProjectReference Include="..\Factory\Factory.Model.csproj" />
-	</ItemGroup>
 	
 </Project>
