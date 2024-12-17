@@ -11,7 +11,66 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v4name: build and test
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+  
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      # Ставим локали и libicu-dev (ICU) для корректной работы .NET с Unicode и рускими символами
+      - name: Install RU locale & ICU
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y locales libicu-dev
+          sudo locale-gen ru_RU.UTF-8
+          sudo update-locale LANG=ru_RU.UTF-8
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 8.0.x
+
+      - name: List directories for debugging
+        run: |
+          echo "Current directory:"
+          pwd
+          echo "Listing all files recursively:"
+          ls -R
+
+      - name: Restore dependencies
+        run: |
+          export LANG=ru_RU.UTF-8
+          export LC_ALL=ru_RU.UTF-8
+          export DOTNET_SYSTEM_GLOBALIZATION_INVARIANT=false
+
+          dotnet restore Factory/Factory/Factory.Model.csproj
+          dotnet restore Factory/Factory.Test/Factory.Test.csproj
+
+      - name: Build
+        run: |
+          export LANG=ru_RU.UTF-8
+          export LC_ALL=ru_RU.UTF-8
+          export DOTNET_SYSTEM_GLOBALIZATION_INVARIANT=false
+
+          dotnet build Factory/Factory/Factory.Model.csproj --no-restore
+          dotnet build Factory/Factory.Test/Factory.Test.csproj --no-restore
+
+      - name: Test
+        run: |
+          export LANG=ru_RU.UTF-8
+          export LC_ALL=ru_RU.UTF-8
+          export DOTNET_SYSTEM_GLOBALIZATION_INVARIANT=false
+
+          dotnet test Factory/Factory.Test/Factory.Test.csproj --no-build --verbosity normal
 
     - name: List directories for debugging
       run: |
