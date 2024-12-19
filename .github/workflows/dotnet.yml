@@ -1,62 +1,36 @@
-name: build and test
+name: .NET Tests
 
 on:
   push:
-    branches: [ "main" ]
+    branches:
+      - main
   pull_request:
-    branches: [ "main" ]
+    branches:
+      - main
 
 jobs:
   build:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v4  # Шаг: выкачиваем репозиторий
-
-      # 1. Устанавливаем русскую локаль и ICU
-      - name: Install RU locale & ICU
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y locales libicu-dev
-          sudo locale-gen ru_RU.UTF-8
-          sudo update-locale LANG=ru_RU.UTF-8
-
-      # 2. Настраиваем .NET 8.0.x
+      # Установка .NET SDK
       - name: Setup .NET
-        uses: actions/setup-dotnet@v4
+        uses: actions/setup-dotnet@v3
         with:
-          dotnet-version: 8.0.x
+          dotnet-version: '7.x'
 
-      # 3. Отладочная информация — какие файлы есть в репо
-      - name: List directories for debugging
-        run: |
-          echo "Current directory:"
-          pwd
-          echo "Listing all files recursively:"
-          ls -R
+      # Checkout репозитория
+      - name: Checkout code
+        uses: actions/checkout@v3
 
-      # 4. Восстанавливаем зависимости (Restore)
+      # Восстановление зависимостей
       - name: Restore dependencies
-        run: |
-          export LANG=ru_RU.UTF-8
-          export LC_ALL=ru_RU.UTF-8
-          export DOTNET_SYSTEM_GLOBALIZATION_INVARIANT=false
-          dotnet restore Factory/Factory/Factory.Model.csproj
-          dotnet restore Factory/Factory.Test/Factory.Test.csproj
+        run: dotnet restore
 
-      # 5. Сборка (Build)
+      # Сборка проекта
       - name: Build
-        run: |
-          export LANG=ru_RU.UTF-8
-          export LC_ALL=ru_RU.UTF-8
-          export DOTNET_SYSTEM_GLOBALIZATION_INVARIANT=false
-          dotnet build Factory/Factory/Factory.Model.csproj --no-restore
-          dotnet build Factory/Factory.Test/Factory.Test.csproj --no-restore
+        run: dotnet build --no-restore --configuration Release
 
-      # 6. Запуск тестов (Test)
-      - name: Test
-        run: |
-          export LANG=ru_RU.UTF-8
-          export LC_ALL=ru_RU.UTF-8
-          export DOTNET_SYSTEM_GLOBALIZATION_INVARIANT=false
-          dotnet test Factory/Factory.Test/Factory.Test.csproj --no-build --verbosity normal
+      # Запуск тестов
+      - name: Run tests
+        run: dotnet test --no-build --verbosity normal
