@@ -3,9 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.12.35521.163
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Fabric.Domain", "Fabric.Domain\Fabric.Domain.csproj", "{C4041087-2A81-4BD1-BE5B-92321452BDC4}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Fabrics.Domain", "Fabric.Domain\Fabrics.Domain.csproj", "{C4041087-2A81-4BD1-BE5B-92321452BDC4}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Fabric.Test", "Fabric.Test\Fabric.Test.csproj", "{BC0C9C5B-D847-45CA-AD2A-1769DA7FC4C3}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Fabrics.Test", "Fabric.Test\Fabrics.Test.csproj", "{BC0C9C5B-D847-45CA-AD2A-1769DA7FC4C3}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Fabrics.Server", "Fabric.Server\Fabrics.Server.csproj", "{2FDFE22B-F7F5-431D-9209-4C2CE0BA7DF3}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,6 +23,10 @@ Global
 		{BC0C9C5B-D847-45CA-AD2A-1769DA7FC4C3}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{BC0C9C5B-D847-45CA-AD2A-1769DA7FC4C3}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{BC0C9C5B-D847-45CA-AD2A-1769DA7FC4C3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2FDFE22B-F7F5-431D-9209-4C2CE0BA7DF3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2FDFE22B-F7F5-431D-9209-4C2CE0BA7DF3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2FDFE22B-F7F5-431D-9209-4C2CE0BA7DF3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2FDFE22B-F7F5-431D-9209-4C2CE0BA7DF3}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
