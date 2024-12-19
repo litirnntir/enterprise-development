@@ -1,36 +1,49 @@
-name: .NET Tests
+name: build and test
 
 on:
   push:
-    branches:
-      - main
+    branches: [ "main" ]
   pull_request:
-    branches:
-      - main
-
+    branches: [ "main" ]
+  
 jobs:
   build:
+
     runs-on: ubuntu-latest
 
     steps:
-      # Установка .NET SDK
-      - name: Setup .NET
-        uses: actions/setup-dotnet@v3
-        with:
-          dotnet-version: '7.x'
+    - uses: actions/checkout@v4
 
-      # Checkout репозитория
-      - name: Checkout code
-        uses: actions/checkout@v3
+    - name: List directories for debugging
+      run: |
+        echo "Current directory:"
+        pwd
+        echo "Listing all files recursively:"
+        ls -R
 
-      # Восстановление зависимостей
-      - name: Restore dependencies
-        run: dotnet restore
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: 8.0.x 
 
-      # Сборка проекта
-      - name: Build
-        run: dotnet build --no-restore --configuration Release
+    - name: Configure locale for Russian language
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y locales
+        sudo locale-gen ru_RU.UTF-8
+        export LANG=ru_RU.UTF-8
+        export LC_ALL=ru_RU.UTF-8
+      env:
+        DOTNET_CLI_UI_LANGUAGE: ru
 
-      # Запуск тестов
-      - name: Run tests
-        run: dotnet test --no-build --verbosity normal
+    - name: Restore dependencies
+      run: |
+        dotnet restore Fabric/Factory.sln
+
+    - name: Build
+      run: |
+        dotnet build Fabric/Fabric.Domain/Fabric.Domain.csproj --no-restore
+        dotnet build Fabric/Fabric.Test/Fabric.Test.csproj --no-restore
+
+    - name: Test
+      run: dotnet test Fabric/Fabric.Test/Fabric.Test.csproj --no-build --verbosity normal
