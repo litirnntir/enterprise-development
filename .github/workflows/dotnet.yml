@@ -42,8 +42,8 @@ jobs:
 
     - name: Build
       run: |
-        dotnet build Fabric/Fabrics.Domain/Fabrics.Domain.csproj --no-restore
-        dotnet build Fabric/Fabrics.Test/Fabrics.Test.csproj --no-restore
+        dotnet build Fabric/Fabric.Domain/Fabrics.Domain.csproj --no-restore
+        dotnet build Fabric/Fabric.Test/Fabrics.Test.csproj --no-restore
 
     - name: Test
-      run: dotnet test Fabric/Fabrics.Test/Fabrics.Test.csproj --no-build --verbosity normal
+      run: dotnet test Fabric/Fabric.Test/Fabrics.Test.csproj --no-build --verbosity normal
