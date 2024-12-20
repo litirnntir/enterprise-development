@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Fabrics.Domain;
 using Fabrics.Domain.Repositories;
+using Fabrics.Server.Dto;
 
 namespace Fabrics.Server.Controllers;
 
@@ -19,10 +20,6 @@ public class AnalyticsController : ControllerBase
         _shipmentRepository = shipmentRepository;
     }
 
-    /// <summary>
-    /// Get the total number of shipments for each type of goods.
-    /// </summary>
-    /// <returns>List of goods types with shipment counts.</returns>
     [HttpGet("shipments-by-goods-type")]
     public async Task<ActionResult<IEnumerable<object>>> GetShipmentsByGoodsType()
     {
@@ -32,7 +29,7 @@ public class AnalyticsController : ControllerBase
             .GroupBy(s => _providerRepository.GetById(s.ProviderId)?.TypeOfGoods)
             .Select(group => new
             {
-                GoodsType = group.Key,
+                GoodsType = group.Key ?? "Unknown",
                 ShipmentCount = group.Count()
             })
             .ToList();
@@ -40,10 +37,6 @@ public class AnalyticsController : ControllerBase
         return Ok(result);
     }
 
-    /// <summary>
-    /// Get the average number of goods supplied by each provider.
-    /// </summary>
-    /// <returns>List of providers with average supplied goods.</returns>
     [HttpGet("average-goods-by-provider")]
     public async Task<ActionResult<IEnumerable<object>>> GetAverageGoodsByProvider()
     {
@@ -51,20 +44,29 @@ public class AnalyticsController : ControllerBase
 
         var result = shipments
             .GroupBy(s => s.ProviderId)
-            .Select(group => new
+            .Select(group =>
             {
-                Provider = _providerRepository.GetById(group.Key),
-                AverageGoods = group.Average(s => s.NumberOfGoods)
+                var provider = _providerRepository.GetById(group.Key);
+                if (provider == null) return null;
+
+                return new
+                {
+                    Provider = new ProviderGetDto
+                    {
+                        Id = provider.Id,
+                        Name = provider.Name,
+                        TypeOfGoods = provider.TypeOfGoods,
+                        Address = provider.Address
+                    },
+                    AverageGoods = group.Average(s => s.NumberOfGoods)
+                };
             })
+            .Where(x => x != null)
             .ToList();
 
         return Ok(result);
     }
 
-    /// <summary>
-    /// Get fabrics with the highest number of shipments.
-    /// </summary>
-    /// <returns>List of top fabrics by shipment count.</returns>
     [HttpGet("top-fabrics-by-shipments")]
     public async Task<ActionResult<IEnumerable<object>>> GetTopFabricsByShipments()
     {
@@ -72,11 +74,28 @@ public class AnalyticsController : ControllerBase
 
         var result = shipments
             .GroupBy(s => s.FabricId)
-            .Select(group => new
+            .Select(group =>
             {
-                Fabric = _fabricRepository.GetById(group.Key),
-                ShipmentCount = group.Count()
+                var fabric = _fabricRepository.GetById(group.Key);
+                if (fabric == null) return null;
+
+                return new
+                {
+                    Fabric = new FabricGetDto
+                    {
+                        Id = fabric.Id,
+                        Type = fabric.Type,
+                        Name = fabric.Name,
+                        Address = fabric.Address,
+                        PhoneNumber = fabric.PhoneNumber,
+                        FormOfOwnership = fabric.FormOfOwnership,
+                        NumberOfWorkers = fabric.NumberOfWorkers,
+                        TotalSquare = fabric.TotalSquare
+                    },
+                    ShipmentCount = group.Count()
+                };
             })
+            .Where(x => x != null)
             .OrderByDescending(x => x.ShipmentCount)
             .Take(10)
             .ToList();
@@ -84,10 +103,6 @@ public class AnalyticsController : ControllerBase
         return Ok(result);
     }
 
-    /// <summary>
-    /// Get the total area of all fabrics grouped by ownership form.
-    /// </summary>
-    /// <returns>List of ownership forms with total fabric area.</returns>
     [HttpGet("total-area-by-ownership")]
     public async Task<ActionResult<IEnumerable<object>>> GetTotalAreaByOwnership()
     {
@@ -97,7 +112,7 @@ public class AnalyticsController : ControllerBase
             .GroupBy(f => f.FormOfOwnership)
             .Select(group => new
             {
-                OwnershipForm = group.Key,
+                OwnershipForm = group.Key ?? "Unknown",
                 TotalArea = group.Sum(f => f.TotalSquare)
             })
             .ToList();
@@ -105,10 +120,6 @@ public class AnalyticsController : ControllerBase
         return Ok(result);
     }
 
-    /// <summary>
-    /// Get the most active providers by total number of goods supplied.
-    /// </summary>
-    /// <returns>List of providers with the most goods supplied.</returns>
     [HttpGet("most-active-providers")]
     public async Task<ActionResult<IEnumerable<object>>> GetMostActiveProviders()
     {
@@ -116,11 +127,24 @@ public class AnalyticsController : ControllerBase
 
         var result = shipments
             .GroupBy(s => s.ProviderId)
-            .Select(group => new
+            .Select(group =>
             {
-                Provider = _providerRepository.GetById(group.Key),
-                TotalGoods = group.Sum(s => s.NumberOfGoods)
+                var provider = _providerRepository.GetById(group.Key);
+                if (provider == null) return null;
+
+                return new
+                {
+                    Provider = new ProviderGetDto
+                    {
+                        Id = provider.Id,
+                        Name = provider.Name,
+                        TypeOfGoods = provider.TypeOfGoods,
+                        Address = provider.Address
+                    },
+                    TotalGoods = group.Sum(s => s.NumberOfGoods)
+                };
             })
+            .Where(x => x != null)
             .OrderByDescending(x => x.TotalGoods)
             .Take(5)
             .ToList();

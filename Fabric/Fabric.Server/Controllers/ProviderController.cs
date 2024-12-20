@@ -1,7 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using AutoMapper;
 using Fabrics.Domain;
 using Fabrics.Domain.Repositories;
+using Fabrics.Server.Dto;
+using AutoMapper;
 
 namespace Fabrics.Server.Controllers;
 
@@ -12,10 +13,15 @@ public class ProviderController(IRepository<Provider> repository, IMapper mapper
     /// <summary>
     /// Get all providers.
     /// </summary>
-    /// <returns>List of <see cref="Provider"/></returns>
+    /// <returns>List of ProviderGetDto</returns>
     /// <response code="200">Request successful</response>
     [HttpGet]
-    public async Task<ActionResult<IEnumerable<Provider>>> Get() => Ok(await Task.FromResult(repository.GetAll()));
+    public async Task<ActionResult<IEnumerable<ProviderGetDto>>> Get()
+    {
+        var providers = await Task.FromResult(repository.GetAll());
+        var providerDtos = mapper.Map<IEnumerable<ProviderGetDto>>(providers);
+        return Ok(providerDtos);
+    }
 
     /// <summary>
     /// Get a provider by ID.
@@ -25,44 +31,49 @@ public class ProviderController(IRepository<Provider> repository, IMapper mapper
     /// <response code="200">Request successful</response>
     /// <response code="404">Provider not found</response>
     [HttpGet("{id}")]
-    public async Task<ActionResult<Provider>> Get(int id)
+    public async Task<ActionResult<ProviderGetDto>> Get(int id)
     {
         var provider = await Task.FromResult(repository.GetById(id));
 
         if (provider == null)
             return NotFound();
 
-        return Ok(provider);
+        var providerDto = mapper.Map<ProviderGetDto>(provider);
+        return Ok(providerDto);
     }
 
     /// <summary>
     /// Add a new provider.
     /// </summary>
-    /// <param name="item">The provider to add</param>
+    /// <param name="dto">The provider to add</param>
     /// <returns>The created provider</returns>
-    /// <response code="200">Request successful</response>
+    /// <response code="201">Provider created successfully</response>
     [HttpPost]
-    public async Task<ActionResult<Provider>> Post([FromBody] Provider item)
+    public async Task<ActionResult<ProviderGetDto>> Post([FromBody] ProviderPostDto dto)
     {
-        var provider = await Task.FromResult(repository.Post(item));
-        return Ok(provider);
+        var provider = mapper.Map<Provider>(dto);
+        var createdProvider = await Task.FromResult(repository.Post(provider));
+        var createdDto = mapper.Map<ProviderGetDto>(createdProvider);
+        return CreatedAtAction(nameof(Get), new { id = createdDto.Id }, createdDto);
     }
 
     /// <summary>
     /// Update a provider by ID.
     /// </summary>
     /// <param name="id">ID of the provider to update</param>
-    /// <param name="item">The updated provider</param>
+    /// <param name="dto">The updated provider</param>
     /// <returns>The updated provider</returns>
     /// <response code="200">Request successful</response>
     /// <response code="404">Provider not found</response>
     [HttpPut("{id}")]
-    public async Task<ActionResult<Provider>> Put(int id, [FromBody] Provider item)
+    public async Task<ActionResult<ProviderGetDto>> Put(int id, [FromBody] ProviderPostDto dto)
     {
-        if (!repository.Put(id, item))
+        var provider = mapper.Map<Provider>(dto);
+        if (!repository.Put(id, provider))
             return NotFound();
 
-        return Ok(item);
+        var updatedDto = mapper.Map<ProviderGetDto>(provider);
+        return Ok(updatedDto);
     }
 
     /// <summary>
@@ -78,4 +89,3 @@ public class ProviderController(IRepository<Provider> repository, IMapper mapper
         return Ok();
     }
 }
-
