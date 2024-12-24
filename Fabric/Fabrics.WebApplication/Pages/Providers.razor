@@ -1,0 +1,199 @@
+﻿@page "/providers"
+@inject HttpClient Http
+@inject ServerApi Api
+
+<PageTitle>Providers</PageTitle>
+
+<h1>Provider Management</h1>
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Name</th>
+            <th>Type Of Goods</th>
+            <th>Address</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (_providers == null || !_providers.Any())
+        {
+            <tr>
+                <td colspan="5" class="text-center">No providers found.</td>
+            </tr>
+        }
+        else
+        {
+            @foreach (var provider in _providers)
+            {
+                <tr>
+                    <td>@provider.Id</td>
+                    <td>@provider.Name</td>
+                    <td>@provider.TypeOfGoods</td>
+                    <td>@provider.Address</td>
+                    <td>
+                        <button class="btn btn-primary" @onclick="() => ShowUpdForm(provider.Id)">Edit</button>
+                        <button class="btn btn-danger" @onclick="() => DeleteProvider(provider.Id)">Delete</button>
+                    </td>
+                </tr>
+            }
+        }
+    </tbody>
+</table>
+
+<h3>@(flagAdd ? "Add New Provider" : "Edit Provider")</h3>
+
+<EditForm Model="@currentProvider" OnValidSubmit="HandleFormSubmit">
+    <DataAnnotationsValidator />
+    <div class="mb-3">
+        <label for="name" class="form-label">Name</label>
+        <InputText id="name" class="form-control" @bind-Value="currentProvider.Name" />
+    </div>
+    <div class="mb-3">
+        <label for="typeOfGoods" class="form-label">Type Of Goods</label>
+        <InputText id="typeOfGoods" class="form-control" @bind-Value="currentProvider.TypeOfGoods" />
+    </div>
+    <div class="mb-3">
+        <label for="address" class="form-label">Address</label>
+        <InputText id="address" class="form-control" @bind-Value="currentProvider.Address" />
+    </div>
+    <button type="submit" class="btn btn-success">Save</button>
+    <button type="button" class="btn btn-secondary" @onclick="ClearForm">Cancel</button>
+</EditForm>
+
+@code {
+    private List<ProviderGetDto> _providers = new();
+    private ProviderGetDto currentProvider = new()
+    {
+        Name = string.Empty,
+        TypeOfGoods = string.Empty,
+        Address = string.Empty
+    };
+    private string providerUrl = "api/Provider";
+    private bool flagAdd = true;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadProviders();
+    }
+
+    private async Task LoadProviders()
+    {
+        try
+        {
+            _providers = (await Api.ProviderAllAsync()).ToList();
+        }
+        catch (Exception ex)
+        {
+            Console.Error.WriteLine($"Error loading providers: {ex.Message}");
+        }
+    }
+
+    private async Task AddNewProvider()
+    {
+        try
+        {
+            var tmp = new ProviderPostDto
+            {
+                Name = currentProvider.Name,
+                TypeOfGoods = currentProvider.TypeOfGoods,
+                Address = currentProvider.Address
+            };
+            var response = await Api.ProviderPOSTAsync(tmp);
+
+            if (response != null)
+            {
+                ClearForm();
+                await LoadProviders();
+            }
+            else
+            {
+                Console.Error.WriteLine("Failed to add new provider.");
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.Error.WriteLine($"Error adding provider: {ex.Message}");
+        }
+    }
+
+    private async Task DeleteProvider(int providerId)
+    {
+        try
+        {
+            await Api.ProviderDELETEAsync(providerId);
+            await LoadProviders();
+        }
+        catch (Exception ex)
+        {
+            Console.Error.WriteLine($"Error deleting provider: {ex.Message}");
+        }
+    }
+
+    private async Task UpdateProvider()
+    {
+        try
+        {
+            await Api.ProviderPUTAsync(currentProvider.Id, new ProviderPostDto
+            {
+                Name = currentProvider.Name,
+                TypeOfGoods = currentProvider.TypeOfGoods,
+                Address = currentProvider.Address
+            });
+            ClearForm();
+            await LoadProviders();
+        }
+        catch (Exception ex)
+        {
+            Console.Error.WriteLine($"Error updating provider: {ex.Message}");
+        }
+    }
+
+    private async Task ShowUpdForm(int providerId)
+    {
+        flagAdd = false;
+        try
+        {
+            var response = await Api.ProviderGETAsync(providerId);
+            if (response != null)
+            {
+                currentProvider = new ProviderGetDto
+                {
+                    Id = response.Id,
+                    Name = response.Name,
+                    TypeOfGoods = response.TypeOfGoods,
+                    Address = response.Address
+                };
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.Error.WriteLine($"Error loading provider details: {ex.Message}");
+        }
+    }
+
+    private void ClearForm()
+    {
+        flagAdd = true;
+        currentProvider = new ProviderGetDto
+        {
+            Id = 0,
+            Name = string.Empty,
+            TypeOfGoods = string.Empty,
+            Address = string.Empty
+        };
+    }
+
+    private async Task HandleFormSubmit()
+    {
+        if (flagAdd)
+        {
+            await AddNewProvider();
+        }
+        else
+        {
+            await UpdateProvider();
+        }
+    }
+}

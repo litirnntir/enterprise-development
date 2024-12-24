@@ -1,0 +1,40 @@
+﻿@using MudBlazor
+<div class="top-row ps-3 navbar navbar-dark">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="">Fabrics</a>
+    </div>
+</div>
+
+<input type="checkbox" title="Navigation menu" class="navbar-toggler" />
+
+<div class="nav-scrollable" onclick="document.querySelector('.navbar-toggler').click()">
+    <nav class="flex-column">
+        <div class="nav-item px-3">
+            <NavLink class="nav-link" href="" Match="NavLinkMatch.All">
+                <MudIcon Icon="@Icons.Material.Filled.Person" Color="MudBlazor.Color.Primary" />
+                <span class="bi" aria-hidden="true"></span> Fabrics
+            </NavLink>
+        </div>
+
+        <div class="nav-item px-3">
+            <NavLink class="nav-link" href="providers">
+                <MudIcon Icon="@Icons.Material.Filled.CarRental" Color="MudBlazor.Color.Primary" />
+                <span class="bi" aria-hidden="true"></span> Providers
+            </NavLink>
+        </div>
+
+        <div class="nav-item px-3">
+            <NavLink class="nav-link" href="shipments">
+                <MudIcon Icon="@Icons.Material.Filled.EditCalendar" Color="MudBlazor.Color.Primary" />
+                <span class="bi" aria-hidden="true"></span> Shipments
+            </NavLink>
+        </div>
+
+        <div class="nav-item px-3">
+            <NavLink class="nav-link" href="queries">
+                <MudIcon Icon="@Icons.Material.Filled.ManageSearch" Color="MudBlazor.Color.Primary" />
+                <span class="bi" aria-hidden="true"></span> Queries
+            </NavLink>
+        </div>
+    </nav>
+</div>

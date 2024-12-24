@@ -1,0 +1,209 @@
+﻿@page "/shipments"
+@inject HttpClient Http
+@inject ServerApi Api
+
+<PageTitle>Shipments</PageTitle>
+
+<h1>Shipment Management</h1>
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Fabric ID</th>
+            <th>Provider ID</th>
+            <th>Date</th>
+            <th>Number of Goods</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (_shipments == null || !_shipments.Any())
+        {
+            <tr>
+                <td colspan="6" class="text-center">No shipments found.</td>
+            </tr>
+        }
+        else
+        {
+            @foreach (var shipment in _shipments)
+            {
+                <tr>
+                    <td>@shipment.Id</td>
+                    <td>@shipment.FabricId</td>
+                    <td>@shipment.ProviderId</td>
+                    <td>@shipment.Date.ToString("yyyy-MM-dd")</td>
+                    <td>@shipment.NumberOfGoods</td>
+                    <td>
+                        <button class="btn btn-primary" @onclick="() => ShowUpdForm(shipment.Id)">Edit</button>
+                        <button class="btn btn-danger" @onclick="() => DeleteShipment(shipment.Id)">Delete</button>
+                    </td>
+                </tr>
+            }
+        }
+    </tbody>
+</table>
+
+<h3>@(flagAdd ? "Add New Shipment" : "Edit Shipment")</h3>
+
+<EditForm Model="@currentShipment" OnValidSubmit="HandleFormSubmit">
+    <DataAnnotationsValidator />
+    <div class="mb-3">
+        <label for="fabricId" class="form-label">Fabric ID</label>
+        <InputNumber id="fabricId" class="form-control" @bind-Value="currentShipment.FabricId" />
+    </div>
+    <div class="mb-3">
+        <label for="providerId" class="form-label">Provider ID</label>
+        <InputNumber id="providerId" class="form-control" @bind-Value="currentShipment.ProviderId" />
+    </div>
+    <div class="mb-3">
+        <label for="date" class="form-label">Date</label>
+        <InputDate id="date" class="form-control" @bind-Value="currentShipment.Date" />
+    </div>
+    <div class="mb-3">
+        <label for="numberOfGoods" class="form-label">Number of Goods</label>
+        <InputNumber id="numberOfGoods" class="form-control" @bind-Value="currentShipment.NumberOfGoods" />
+    </div>
+    <button type="submit" class="btn btn-success">Save</button>
+    <button type="button" class="btn btn-secondary" @onclick="ClearForm">Cancel</button>
+</EditForm>
+
+@code {
+    private List<ShipmentGetDto> _shipments = new();
+    private ShipmentGetDto currentShipment = new()
+    {
+        FabricId = 0,
+        ProviderId = 0,
+        Date = DateTime.Today,
+        NumberOfGoods = 0
+    };
+    private bool flagAdd = true;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadShipments();
+    }
+
+    private async Task LoadShipments()
+    {
+        try
+        {
+            _shipments = (await Api.ShipmentAllAsync()).ToList();
+        }
+        catch (Exception ex)
+        {
+            Console.Error.WriteLine($"Error loading shipments: {ex.Message}");
+        }
+    }
+
+    private async Task AddNewShipment()
+    {
+        try
+        {
+            var tmp = new ShipmentPostDto
+            {
+                FabricId = currentShipment.FabricId,
+                ProviderId = currentShipment.ProviderId,
+                Date = currentShipment.Date,
+                NumberOfGoods = currentShipment.NumberOfGoods
+            };
+            var response = await Api.ShipmentPOSTAsync(tmp);
+
+            if (response != null)
+            {
+                ClearForm();
+                await LoadShipments();
+            }
+            else
+            {
+                Console.Error.WriteLine("Failed to add new shipment.");
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.Error.WriteLine($"Error adding shipment: {ex.Message}");
+        }
+    }
+
+    private async Task DeleteShipment(int shipmentId)
+    {
+        try
+        {
+            await Api.ShipmentDELETEAsync(shipmentId);
+            await LoadShipments();
+        }
+        catch (Exception ex)
+        {
+            Console.Error.WriteLine($"Error deleting shipment: {ex.Message}");
+        }
+    }
+
+    private async Task UpdateShipment()
+    {
+        try
+        {
+            await Api.ShipmentPUTAsync(currentShipment.Id, new ShipmentPostDto
+            {
+                FabricId = currentShipment.FabricId,
+                ProviderId = currentShipment.ProviderId,
+                Date = currentShipment.Date,
+                NumberOfGoods = currentShipment.NumberOfGoods
+            });
+            ClearForm();
+            await LoadShipments();
+        }
+        catch (Exception ex)
+        {
+            Console.Error.WriteLine($"Error updating shipment: {ex.Message}");
+        }
+    }
+
+    private async Task ShowUpdForm(int shipmentId)
+    {
+        flagAdd = false;
+        try
+        {
+            var response = await Api.ShipmentGETAsync(shipmentId);
+            if (response != null)
+            {
+                currentShipment = new ShipmentGetDto
+                {
+                    Id = response.Id,
+                    FabricId = response.FabricId,
+                    ProviderId = response.ProviderId,
+                    Date = response.Date,
+                    NumberOfGoods = response.NumberOfGoods
+                };
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.Error.WriteLine($"Error loading shipment details: {ex.Message}");
+        }
+    }
+
+    private void ClearForm()
+    {
+        flagAdd = true;
+        currentShipment = new ShipmentGetDto
+        {
+            Id = 0,
+            FabricId = 0,
+            ProviderId = 0,
+            Date = DateTime.Today,
+            NumberOfGoods = 0
+        };
+    }
+
+    private async Task HandleFormSubmit()
+    {
+        if (flagAdd)
+        {
+            await AddNewShipment();
+        }
+        else
+        {
+            await UpdateShipment();
+        }
+    }
+}

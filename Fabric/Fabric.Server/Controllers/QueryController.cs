@@ -1,9 +1,7 @@
-﻿using Fabrics.Domain;
-using Fabrics.Domain.Repositories;
+﻿using Fabrics.Domain.Repositories;
+using Fabrics.Domain;
 using Fabrics.Server.Dto;
 using Microsoft.AspNetCore.Mvc;
-
-namespace Fabrics.Server.Controllers;
 
 [Route("api/[controller]")]
 [ApiController]
@@ -12,7 +10,7 @@ public class QueryController(IRepository<Shipment> shipmentRepository, IReposito
     /// <summary>
     /// Get all shipments by a specific provider.
     /// </summary>
-    [HttpGet("shipments_by_provider")]
+    [HttpGet("shipments-by-provider")]
     public async Task<ActionResult<IEnumerable<ShipmentGetDto>>> GetShipmentsByProvider(int providerId)
     {
         var shipments = await Task.FromResult(shipmentRepository.GetAll());
@@ -33,7 +31,7 @@ public class QueryController(IRepository<Shipment> shipmentRepository, IReposito
     /// <summary>
     /// Get all providers who supplied goods within a specific period, ordered by name.
     /// </summary>
-    [HttpGet("providers_by_date")]
+    [HttpGet("providers-by-date")]
     public async Task<ActionResult<IEnumerable<ProviderGetDto>>> GetProvidersByDate(DateTime startDate, DateTime endDate)
     {
         if (startDate >= endDate)
@@ -60,7 +58,7 @@ public class QueryController(IRepository<Shipment> shipmentRepository, IReposito
     /// <summary>
     /// Get the count of unique fabrics served by each provider.
     /// </summary>
-    [HttpGet("count_fabrics_by_provider")]
+    [HttpGet("count-fabrics-by-provider")]
     public async Task<ActionResult<IEnumerable<object>>> CountFabricsByProvider()
     {
         var shipments = await Task.FromResult(shipmentRepository.GetAll());
@@ -78,7 +76,7 @@ public class QueryController(IRepository<Shipment> shipmentRepository, IReposito
     /// <summary>
     /// Get the top 5 fabrics by shipment count.
     /// </summary>
-    [HttpGet("top_5_fabrics")]
+    [HttpGet("top-5-fabrics")]
     public async Task<ActionResult<IEnumerable<object>>> Top5FabricsByShipments()
     {
         var shipments = await Task.FromResult(shipmentRepository.GetAll());
@@ -98,7 +96,7 @@ public class QueryController(IRepository<Shipment> shipmentRepository, IReposito
     /// <summary>
     /// Get providers with the maximum quantity of goods supplied within a specified period.
     /// </summary>
-    [HttpGet("max_quantity_providers_by_period")]
+    [HttpGet("max-quantity-providers-by-period")]
     public async Task<ActionResult<IEnumerable<object>>> MaxProvidersByQuantity(DateTime startDate, DateTime endDate)
     {
         if (startDate >= endDate)

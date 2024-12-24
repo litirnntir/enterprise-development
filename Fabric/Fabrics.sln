@@ -9,6 +9,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Fabrics.Test", "Fabric.Test
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Fabrics.Server", "Fabric.Server\Fabrics.Server.csproj", "{2FDFE22B-F7F5-431D-9209-4C2CE0BA7DF3}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Fabrics.WebApplication", "Fabrics.WebApplication\Fabrics.WebApplication.csproj", "{8EDBC40A-5A5F-4478-8503-CCC8799E020C}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,6 +29,10 @@ Global
 		{2FDFE22B-F7F5-431D-9209-4C2CE0BA7DF3}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2FDFE22B-F7F5-431D-9209-4C2CE0BA7DF3}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2FDFE22B-F7F5-431D-9209-4C2CE0BA7DF3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8EDBC40A-5A5F-4478-8503-CCC8799E020C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8EDBC40A-5A5F-4478-8503-CCC8799E020C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8EDBC40A-5A5F-4478-8503-CCC8799E020C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8EDBC40A-5A5F-4478-8503-CCC8799E020C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

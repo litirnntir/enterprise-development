@@ -1,0 +1,269 @@
+﻿@page "/queries"
+@using MudBlazor
+@inject ServerApi Api
+
+<h2>Queries</h2>
+
+<MudExpansionPanels MultiExpansion="true">
+    <!-- Query 1: Shipments by Provider ID -->
+    <MudExpansionPanel Text="Query 1: Display shipments by provider ID">
+        <div class="input-container">
+            <div class="mb-3">
+                <MudTextField id="providerId" Label="Provider ID" @bind-Value="_providerId" />
+            </div>
+        </div>
+        <div class="button-container">
+            <MudButton Color="MudBlazor.Color.Primary" OnClick="@(() => ClickHandler(1))">Get result</MudButton>
+            <MudButton Color="MudBlazor.Color.Error" OnClick="@(() => ClearTask(1))">Clear</MudButton>
+        </div>
+        <div class="table-container">
+            @if (shipments != null)
+            {
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Shipment ID</th>
+                            <th>Fabric ID</th>
+                            <th>Provider ID</th>
+                            <th>Date</th>
+                            <th>Number of Goods</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var shipment in shipments)
+                        {
+                            <tr>
+                                <td>@shipment.Id</td>
+                                <td>@shipment.FabricId</td>
+                                <td>@shipment.ProviderId</td>
+                                <td>@shipment.Date.ToString("yyyy-MM-dd")</td>
+                                <td>@shipment.NumberOfGoods</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            }
+            else
+            {
+                <p class="no-data">No data available.</p>
+            }
+        </div>
+    </MudExpansionPanel>
+
+    <!-- Query 2: Providers by Date Range -->
+    <MudExpansionPanel Text="Query 2: Display providers by date range">
+        <div class="input-container">
+            <div class="mb-3">
+                <MudDatePicker id="startDate" Label="Start Date" @bind-Date="_startDate" Editable="true" />
+            </div>
+            <div class="mb-3">
+                <MudDatePicker id="endDate" Label="End Date" @bind-Date="_endDate" Editable="true" />
+            </div>
+        </div>
+        <div class="button-container">
+            <MudButton Color="MudBlazor.Color.Primary" OnClick="@(() => ClickHandler(2))">Get result</MudButton>
+            <MudButton Color="MudBlazor.Color.Error" OnClick="@(() => ClearTask(2))">Clear</MudButton>
+        </div>
+        <div class="table-container">
+            @if (providers != null)
+            {
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Provider ID</th>
+                            <th>Name</th>
+                            <th>Type Of Goods</th>
+                            <th>Address</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var provider in providers)
+                        {
+                            <tr>
+                                <td>@provider.Id</td>
+                                <td>@provider.Name</td>
+                                <td>@provider.TypeOfGoods</td>
+                                <td>@provider.Address</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            }
+            else
+            {
+                <p class="no-data">No data available.</p>
+            }
+        </div>
+    </MudExpansionPanel>
+
+    <!-- Query 3: Count of Fabrics by Provider -->
+    <MudExpansionPanel Text="Query 3: Count of unique fabrics by provider">
+        <div class="button-container">
+            <MudButton Color="MudBlazor.Color.Primary" OnClick="@(() => ClickHandler(3))">Get result</MudButton>
+            <MudButton Color="MudBlazor.Color.Error" OnClick="@(() => ClearTask(3))">Clear</MudButton>
+        </div>
+        <div class="table-container">
+            @if (fabricCounts != null)
+            {
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Provider Name</th>
+                            <th>Fabric Count</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var count in fabricCounts)
+                        {
+                            <tr>
+                                <td>@count.Provider</td>
+                                <td>@count.FabricCount</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            }
+            else
+            {
+                <p class="no-data">No data available.</p>
+            }
+        </div>
+    </MudExpansionPanel>
+
+    <!-- Query 4: Top 5 Fabrics by Shipments -->
+    <MudExpansionPanel Text="Query 4: Top 5 fabrics by shipment count">
+        <div class="button-container">
+            <MudButton Color="MudBlazor.Color.Primary" OnClick="@(() => ClickHandler(4))">Get result</MudButton>
+            <MudButton Color="MudBlazor.Color.Error" OnClick="@(() => ClearTask(4))">Clear</MudButton>
+        </div>
+        <div class="table-container">
+            @if (topFabrics != null)
+            {
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Fabric Name</th>
+                            <th>Shipment Count</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var fabric in topFabrics)
+                        {
+                            <tr>
+                                <td>@fabric.Fabric</td>
+                                <td>@fabric.ShipmentCount</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            }
+            else
+            {
+                <p class="no-data">No data available.</p>
+            }
+        </div>
+    </MudExpansionPanel>
+
+    <!-- Query 5: Max Quantity Providers by Period -->
+    <MudExpansionPanel Text="Query 5: Providers with max quantity of goods in a period">
+        <div class="input-container">
+            <div class="mb-3">
+                <MudDatePicker id="startDateMax" Label="Start Date" @bind-Date="_startDateMax" Editable="true" />
+            </div>
+            <div class="mb-3">
+                <MudDatePicker id="endDateMax" Label="End Date" @bind-Date="_endDateMax" Editable="true" />
+            </div>
+        </div>
+        <div class="button-container">
+            <MudButton Color="MudBlazor.Color.Primary" OnClick="@(() => ClickHandler(5))">Get result</MudButton>
+            <MudButton Color="MudBlazor.Color.Error" OnClick="@(() => ClearTask(5))">Clear</MudButton>
+        </div>
+        <div class="table-container">
+            @if (maxProviders != null)
+            {
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Provider Name</th>
+                            <th>Total Quantity</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var provider in maxProviders)
+                        {
+                            <tr>
+                                <td>@provider.Provider</td>
+                                <td>@provider.TotalQuantity</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            }
+            else
+            {
+                <p class="no-data">No data available.</p>
+            }
+        </div>
+    </MudExpansionPanel>
+</MudExpansionPanels>
+
+@code {
+    private List<ShipmentGetDto> shipments = null!;
+    private List<ProviderGetDto> providers = null!;
+    private List<object> fabricCounts = null!;
+    private List<object> topFabrics = null!;
+    private List<object> maxProviders = null!;
+
+    private int _providerId;
+    private DateTime? _startDate;
+    private DateTime? _endDate;
+    private DateTime? _startDateMax;
+    private DateTime? _endDateMax;
+
+    private async Task ClickHandler(int taskId)
+    {
+        try
+        {
+            switch (taskId)
+            {
+                case 1:
+                    shipments = (await Api.GetShipmentsByProviderAsync(_providerId)).ToList();
+                    break;
+                case 2:
+                    if (_startDate.HasValue && _endDate.HasValue)
+                    {
+                        providers = (await Api.GetProvidersByDateAsync(_startDate.Value, _endDate.Value)).ToList();
+                    }
+                    break;
+                case 3:
+                    fabricCounts = (await Api.CountFabricsByProviderAsync()).ToList();
+                    break;
+                case 4:
+                    topFabrics = (await Api.Top5FabricsByShipmentsAsync()).ToList();
+                    break;
+                case 5:
+                    if (_startDateMax.HasValue && _endDateMax.HasValue)
+                    {
+                        maxProviders = (await Api.MaxProvidersByQuantityAsync(_startDateMax.Value, _endDateMax.Value)).ToList();
+                    }
+                    break;
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error loading data for Query {taskId}: {ex.Message}");
+        }
+    }
+
+    private void ClearTask(int taskId)
+    {
+        switch (taskId)
+        {
+            case 1: shipments = null!; break;
+            case 2: providers = null!; break;
+            case 3: fabricCounts = null!; break;
+            case 4: topFabrics = null!; break;
+            case 5: maxProviders = null!; break;
+        }
+    }
+}

@@ -1,0 +1,240 @@
+﻿@page "/fabrics"
+@inject HttpClient Http
+@inject ServerApi Api
+
+<PageTitle>Fabrics</PageTitle>
+
+<h1>Fabric Management</h1>
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Type</th>
+            <th>Name</th>
+            <th>Address</th>
+            <th>Phone Number</th>
+            <th>Form of Ownership</th>
+            <th>Number of Workers</th>
+            <th>Total Square</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (_fabrics == null || !_fabrics.Any())
+        {
+            <tr>
+                <td colspan="9" class="text-center">No fabrics found.</td>
+            </tr>
+        }
+        else
+        {
+            @foreach (var fabric in _fabrics)
+            {
+                <tr>
+                    <td>@fabric.Id</td>
+                    <td>@fabric.Type</td>
+                    <td>@fabric.Name</td>
+                    <td>@fabric.Address</td>
+                    <td>@fabric.PhoneNumber</td>
+                    <td>@fabric.FormOfOwnership</td>
+                    <td>@fabric.NumberOfWorkers</td>
+                    <td>@fabric.TotalSquare</td>
+                    <td>
+                        <button class="btn btn-primary" @onclick="() => ShowUpdForm(fabric.Id)">Edit</button>
+                        <button class="btn btn-danger" @onclick="() => DeleteFabric(fabric.Id)">Delete</button>
+                    </td>
+                </tr>
+            }
+        }
+    </tbody>
+</table>
+
+<h3>@(flagAdd ? "Add New Fabric" : "Edit Fabric")</h3>
+
+<EditForm Model="@currentFabric" OnValidSubmit="HandleFormSubmit">
+    <DataAnnotationsValidator />
+    <div class="mb-3">
+        <label for="type" class="form-label">Type</label>
+        <InputText id="type" class="form-control" @bind-Value="currentFabric.Type" />
+    </div>
+    <div class="mb-3">
+        <label for="name" class="form-label">Name</label>
+        <InputText id="name" class="form-control" @bind-Value="currentFabric.Name" />
+    </div>
+    <div class="mb-3">
+        <label for="address" class="form-label">Address</label>
+        <InputText id="address" class="form-control" @bind-Value="currentFabric.Address" />
+    </div>
+    <div class="mb-3">
+        <label for="phoneNumber" class="form-label">Phone Number</label>
+        <InputText id="phoneNumber" class="form-control" @bind-Value="currentFabric.PhoneNumber" />
+    </div>
+    <div class="mb-3">
+        <label for="formOfOwnership" class="form-label">Form of Ownership</label>
+        <InputText id="formOfOwnership" class="form-control" @bind-Value="currentFabric.FormOfOwnership" />
+    </div>
+    <div class="mb-3">
+        <label for="numberOfWorkers" class="form-label">Number of Workers</label>
+        <InputNumber id="numberOfWorkers" class="form-control" @bind-Value="currentFabric.NumberOfWorkers" />
+    </div>
+    <div class="mb-3">
+        <label for="totalSquare" class="form-label">Total Square</label>
+        <InputNumber id="totalSquare" class="form-control" @bind-Value="currentFabric.TotalSquare" />
+    </div>
+    <button type="submit" class="btn btn-success">Save</button>
+    <button type="button" class="btn btn-secondary" @onclick="ClearForm">Cancel</button>
+</EditForm>
+
+@code {
+    private List<FabricPostDto> _fabrics = new();
+    private FabricPostDto currentFabric = new()
+        {
+            Type = string.Empty,
+            Name = string.Empty,
+            Address = string.Empty,
+            PhoneNumber = string.Empty,
+            FormOfOwnership = string.Empty,
+            NumberOfWorkers = 0,
+            TotalSquare = 0
+        };
+    private bool flagAdd = true;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadFabrics();
+    }
+
+    private async Task LoadFabrics()
+    {
+        try
+        {
+            _fabrics = (await Api.FabricAllAsync()).ToList();
+        }
+        catch (Exception ex)
+        {
+            Console.Error.WriteLine($"Error loading fabrics: {ex.Message}");
+        }
+    }
+
+    private async Task AddNewFabric()
+    {
+        try
+        {
+            var tmp = new FabricPostDto
+                {
+                    Type = currentFabric.Type,
+                    Name = currentFabric.Name,
+                    Address = currentFabric.Address,
+                    PhoneNumber = currentFabric.PhoneNumber,
+                    FormOfOwnership = currentFabric.FormOfOwnership,
+                    NumberOfWorkers = currentFabric.NumberOfWorkers,
+                    TotalSquare = currentFabric.TotalSquare
+                };
+            var response = await Api.FabricPOSTAsync(tmp);
+
+            if (response != null)
+            {
+                ClearForm();
+                await LoadFabrics();
+            }
+            else
+            {
+                Console.Error.WriteLine("Failed to add new fabric.");
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.Error.WriteLine($"Error adding fabric: {ex.Message}");
+        }
+    }
+
+    private async Task DeleteFabric(int fabricId)
+    {
+        try
+        {
+            await Api.FabricDELETEAsync(fabricId);
+            await LoadFabrics();
+        }
+        catch (Exception ex)
+        {
+            Console.Error.WriteLine($"Error deleting fabric: {ex.Message}");
+        }
+    }
+
+    private async Task UpdateFabric()
+    {
+        try
+        {
+            await Api.FabricPUTAsync(currentFabric.Id, new FabricPostDto
+                {
+                    Type = currentFabric.Type,
+                    Name = currentFabric.Name,
+                    Address = currentFabric.Address,
+                    PhoneNumber = currentFabric.PhoneNumber,
+                    FormOfOwnership = currentFabric.FormOfOwnership,
+                    NumberOfWorkers = currentFabric.NumberOfWorkers,
+                    TotalSquare = currentFabric.TotalSquare
+                });
+            ClearForm();
+            await LoadFabrics();
+        }
+        catch (Exception ex)
+        {
+            Console.Error.WriteLine($"Error updating fabric: {ex.Message}");
+        }
+    }
+
+    private async Task ShowUpdForm(int fabricId)
+    {
+        flagAdd = false;
+        try
+        {
+            var response = await Api.FabricGETAsync(fabricId);
+            if (response != null)
+            {
+                currentFabric = new FabricPostDto
+                    {
+                        Type = response.Type,
+                        Name = response.Name,
+                        Address = response.Address,
+                        PhoneNumber = response.PhoneNumber,
+                        FormOfOwnership = response.FormOfOwnership,
+                        NumberOfWorkers = response.NumberOfWorkers,
+                        TotalSquare = response.TotalSquare
+                    };
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.Error.WriteLine($"Error loading fabric details: {ex.Message}");
+        }
+    }
+
+    private void ClearForm()
+    {
+        flagAdd = true;
+        currentFabric = new FabricPostDto
+            {
+                Type = string.Empty,
+                Name = string.Empty,
+                Address = string.Empty,
+                PhoneNumber = string.Empty,
+                FormOfOwnership = string.Empty,
+                NumberOfWorkers = 0,
+                TotalSquare = 0
+            };
+    }
+
+    private async Task HandleFormSubmit()
+    {
+        if (flagAdd)
+        {
+            await AddNewFabric();
+        }
+        else
+        {
+            await UpdateFabric();
+        }
+    }
+}
