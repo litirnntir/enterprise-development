@@ -37,8 +37,5 @@
 	  <Folder Include="API\" />
 	</ItemGroup>
 
-	<ItemGroup>
-	  <ProjectReference Include="..\Fabric.Server\Fabrics.Server.csproj" />
-	</ItemGroup>
 
 </Project>
