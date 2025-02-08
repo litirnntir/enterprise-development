@@ -10,10 +10,10 @@ namespace Fabrics.Server.Controllers;
 public class AnalyticsController : ControllerBase
 {
     private readonly IRepository<Provider> _providerRepository;
-    private readonly IRepository<Fabric> _fabricRepository;
+    private readonly IRepository<Factory> _fabricRepository;
     private readonly IRepository<Shipment> _shipmentRepository;
 
-    public AnalyticsController(IRepository<Provider> providerRepository, IRepository<Fabric> fabricRepository, IRepository<Shipment> shipmentRepository)
+    public AnalyticsController(IRepository<Provider> providerRepository, IRepository<Factory> fabricRepository, IRepository<Shipment> shipmentRepository)
     {
         _providerRepository = providerRepository;
         _fabricRepository = fabricRepository;

@@ -4,19 +4,19 @@ using Fabrics.Domain;
 using System.Collections.Generic;
 public class FabricsFixture
 {
-    public List<Fabric> FixtureFabrics
+    public List<Factory> FixtureFabrics
     {
         get
         {
             var shipments = FixtureShipments;
-            var fabrics = new List<Fabric>();
-            var firstFabric = new Fabric(1, "Сельское хозяйство", "Спелые фрукты", "г. Нефтегорск, Ул. Пушкина, д.34", "89378533145", "ТОО", 15, 75, new List<Shipment>() { shipments[0], shipments[4] });
+            var fabrics = new List<Factory>();
+            var firstFabric = new Factory(1, "Сельское хозяйство", "Спелые фрукты", "г. Нефтегорск, Ул. Пушкина, д.34", "89378533145", "ТОО", 15, 75, new List<Shipment>() { shipments[0], shipments[4] });
             fabrics.Add(firstFabric);
-            var secondFabric = new Fabric(2, "Транспорт", "Веселый таксист", "г. Самара, Ул. Дыбенко, д.30", "89371532175", "Муниципально-городская", 30, 50, new List<Shipment>() { shipments[1] });
+            var secondFabric = new Factory(2, "Транспорт", "Веселый таксист", "г. Самара, Ул. Дыбенко, д.30", "89371532175", "Муниципально-городская", 30, 50, new List<Shipment>() { shipments[1] });
             fabrics.Add(secondFabric);
-            var thirdFabric = new Fabric(3, "Легкая и тяжелая промышленность", "Тяжелая легкость", "г. Самара, Ул. Понтия Пилата, д.1", "89278632157", "Частная", 70, 400, new List<Shipment>() { shipments[2] });
+            var thirdFabric = new Factory(3, "Легкая и тяжелая промышленность", "Тяжелая легкость", "г. Самара, Ул. Понтия Пилата, д.1", "89278632157", "Частная", 70, 400, new List<Shipment>() { shipments[2] });
             fabrics.Add(thirdFabric);
-            var fourthFabric = new Fabric(4, "Строительство", "Гвозди и молотки", "г. Нефтегорск, Ул. Тургенева, д.13", "89378123455", "Акционерная", 60, 150, new List<Shipment>() { shipments[3], shipments[5] });
+            var fourthFabric = new Factory(4, "Строительство", "Гвозди и молотки", "г. Нефтегорск, Ул. Тургенева, д.13", "89378123455", "Акционерная", 60, 150, new List<Shipment>() { shipments[3], shipments[5] });
             fabrics.Add(fourthFabric);
             return fabrics;
         }

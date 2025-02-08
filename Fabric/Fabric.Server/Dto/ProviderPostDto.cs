@@ -13,7 +13,7 @@ public class ProviderPostDto
     /// </summary>
     public string TypeOfGoods { get; set; } = string.Empty;
     /// <summary>
-    /// PhoneNumber is used to store phone number of Fabric.
+    /// PhoneNumber is used to store phone number of Factory.
     /// </summary>
     public string Address { get; set; } = string.Empty;
 }

@@ -13,13 +13,13 @@ var mapper = mapperConfig.CreateMapper();
 builder.Services.AddSingleton(mapper);
 
 // Register repositories
-builder.Services.AddScoped<IRepository<Fabric>, FabricRepository>();
+builder.Services.AddScoped<IRepository<Factory>, FabricRepository>();
 builder.Services.AddScoped<IRepository<Provider>, ProviderRepository>();
 builder.Services.AddScoped<IRepository<Shipment>, ShipmentRepository>();
 
 // Configure DbContext
 builder.Services.AddDbContextFactory<FabricsDbContext>(options =>
-    options.UseMySQL(builder.Configuration.GetConnectionString("Fabric")!));
+    options.UseMySQL(builder.Configuration.GetConnectionString("Factory")!));
 
 // Add controllers and Swagger
 builder.Services.AddControllers();

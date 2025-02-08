@@ -4,9 +4,9 @@ using Microsoft.EntityFrameworkCore;
 namespace Fabrics.Domain.Repositories;
 
 /// <summary>
-/// Repository class for managing Fabric entities.
+/// Repository class for managing Factory entities.
 /// </summary>
-public class FabricRepository : IRepository<Fabric>
+public class FabricRepository : IRepository<Factory>
 {
     private readonly FabricsDbContext _context;
 
@@ -16,9 +16,9 @@ public class FabricRepository : IRepository<Fabric>
     }
 
     /// <summary>
-    /// Deletes a Fabric entity by its ID.
+    /// Deletes a Factory entity by its ID.
     /// </summary>
-    /// <param name="id">ID of the Fabric to delete.</param>
+    /// <param name="id">ID of the Factory to delete.</param>
     /// <returns>True if deletion was successful, otherwise false.</returns>
     public bool Delete(int id)
     {
@@ -32,24 +32,24 @@ public class FabricRepository : IRepository<Fabric>
     }
 
     /// <summary>
-    /// Gets all Fabric entities.
+    /// Gets all Factory entities.
     /// </summary>
-    /// <returns>A list of all Fabric entities.</returns>
-    public IEnumerable<Fabric> GetAll() => _context.Fabrics.Include(f => f.Shipments).ToList();
+    /// <returns>A list of all Factory entities.</returns>
+    public IEnumerable<Factory> GetAll() => _context.Fabrics.Include(f => f.Shipments).ToList();
 
     /// <summary>
-    /// Gets a Fabric entity by its ID.
+    /// Gets a Factory entity by its ID.
     /// </summary>
-    /// <param name="id">ID of the Fabric to retrieve.</param>
-    /// <returns>The Fabric entity if found, otherwise null.</returns>
-    public Fabric? GetById(int id) => _context.Fabrics.Include(f => f.Shipments).FirstOrDefault(f => f.Id == id);
+    /// <param name="id">ID of the Factory to retrieve.</param>
+    /// <returns>The Factory entity if found, otherwise null.</returns>
+    public Factory? GetById(int id) => _context.Fabrics.Include(f => f.Shipments).FirstOrDefault(f => f.Id == id);
 
     /// <summary>
-    /// Adds a new Fabric entity.
+    /// Adds a new Factory entity.
     /// </summary>
-    /// <param name="entity">The Fabric entity to add.</param>
-    /// <returns>The added Fabric entity.</returns>
-    public Fabric? Post(Fabric entity)
+    /// <param name="entity">The Factory entity to add.</param>
+    /// <returns>The added Factory entity.</returns>
+    public Factory? Post(Factory entity)
     {
         _context.Fabrics.Add(entity);
         _context.SaveChanges();
@@ -57,12 +57,12 @@ public class FabricRepository : IRepository<Fabric>
     }
 
     /// <summary>
-    /// Updates an existing Fabric entity.
+    /// Updates an existing Factory entity.
     /// </summary>
-    /// <param name="id">ID of the Fabric to update.</param>
-    /// <param name="entity">The updated Fabric entity.</param>
+    /// <param name="id">ID of the Factory to update.</param>
+    /// <param name="entity">The updated Factory entity.</param>
     /// <returns>True if the update was successful, otherwise false.</returns>
-    public bool Put(int id, Fabric entity)
+    public bool Put(int id, Factory entity)
     {
         var existingFabric = GetById(id);
         if (existingFabric == null)

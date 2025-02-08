@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 
 [Route("api/[controller]")]
 [ApiController]
-public class QueryController(IRepository<Shipment> shipmentRepository, IRepository<Provider> providerRepository, IRepository<Fabric> fabricRepository) : ControllerBase
+public class QueryController(IRepository<Shipment> shipmentRepository, IRepository<Provider> providerRepository, IRepository<Factory> fabricRepository) : ControllerBase
 {
     /// <summary>
     /// Get all shipments by a specific provider.

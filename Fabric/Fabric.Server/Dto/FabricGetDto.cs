@@ -9,19 +9,19 @@ public class FabricGetDto
     /// </summary>
     public int Id { get; set; }
     /// <summary>
-    /// Type is used to store information about the Fabric category.
+    /// Type is used to store information about the Factory category.
     /// </summary>
     public string Type { get; set; } = string.Empty;
     /// <summary>
-    /// Name is used to store name of Fabric.
+    /// Name is used to store name of Factory.
     /// </summary>
     public string Name { get; set; } = string.Empty;
     /// <summary>
-    /// Address is used to store address of Fabric.
+    /// Address is used to store address of Factory.
     /// </summary>
     public string Address { get; set; } = string.Empty;
     /// <summary>
-    /// PhoneNumber is used to store phone number of Fabric.
+    /// PhoneNumber is used to store phone number of Factory.
     /// </summary>
     public string PhoneNumber { get; set; } = string.Empty;
     /// <summary>
@@ -33,7 +33,7 @@ public class FabricGetDto
     /// </summary>
     public int NumberOfWorkers { get; set; }
     /// <summary>
-    /// TotalSquare is used to store information about the area of the Fabric.
+    /// TotalSquare is used to store information about the area of the Factory.
     /// </summary>
     public int TotalSquare { get; set; }
 }

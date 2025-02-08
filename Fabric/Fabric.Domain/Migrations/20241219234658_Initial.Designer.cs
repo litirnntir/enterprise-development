@@ -22,7 +22,7 @@ namespace Fabrics.Domain.Migrations
                 .HasAnnotation("ProductVersion", "8.0.8")
                 .HasAnnotation("Relational:MaxIdentifierLength", 64);
 
-            modelBuilder.Entity("Fabrics.Domain.Fabric", b =>
+            modelBuilder.Entity("Fabrics.Domain.Factory", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -111,7 +111,7 @@ namespace Fabrics.Domain.Migrations
 
             modelBuilder.Entity("Fabrics.Domain.Shipment", b =>
                 {
-                    b.HasOne("Fabrics.Domain.Fabric", null)
+                    b.HasOne("Fabrics.Domain.Factory", null)
                         .WithMany("Shipments")
                         .HasForeignKey("FabricId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -124,7 +124,7 @@ namespace Fabrics.Domain.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("Fabrics.Domain.Fabric", b =>
+            modelBuilder.Entity("Fabrics.Domain.Factory", b =>
                 {
                     b.Navigation("Shipments");
                 });

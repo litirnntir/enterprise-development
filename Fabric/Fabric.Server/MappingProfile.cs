@@ -8,14 +8,14 @@ public class MappingProfile : Profile
 {
     public MappingProfile()
     {
-        CreateMap<Fabric, FabricGetDto>();
-        CreateMap<Fabric, FabricPostDto>();
+        CreateMap<Factory, FabricGetDto>();
+        CreateMap<Factory, FabricPostDto>();
         CreateMap<Provider, ProviderGetDto>();
         CreateMap<Provider, ProviderPostDto>();
         CreateMap<Shipment, ShipmentGetDto>();
         CreateMap<Shipment, ShipmentPostDto>();
 
-        CreateMap<FabricPostDto, Fabric>();
+        CreateMap<FabricPostDto, Factory>();
         CreateMap<ProviderPostDto, Provider>();
         CreateMap<ShipmentPostDto, Shipment>();
     }

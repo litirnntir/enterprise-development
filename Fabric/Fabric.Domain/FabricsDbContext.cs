@@ -5,25 +5,25 @@ namespace Fabrics.Domain;
 
 public class FabricsDbContext(DbContextOptions<FabricsDbContext> options) : DbContext(options)
 {
-    public DbSet<Fabric> Fabrics { get; set; }
+    public DbSet<Factory> Fabrics { get; set; }
     public DbSet<Provider> Providers { get; set; }
     public DbSet<Shipment> Shipments { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        // Configure Fabric entity
-        modelBuilder.Entity<Fabric>()
+        // Configure Factory entity
+        modelBuilder.Entity<Factory>()
             .HasKey(f => f.Id);
 
-        modelBuilder.Entity<Fabric>()
+        modelBuilder.Entity<Factory>()
             .Property(f => f.Type)
             .IsRequired();
 
-        modelBuilder.Entity<Fabric>()
+        modelBuilder.Entity<Factory>()
             .Property(f => f.Name)
             .IsRequired();
 
-        modelBuilder.Entity<Fabric>()
+        modelBuilder.Entity<Factory>()
             .HasMany(f => f.Shipments)
             .WithOne()
             .HasForeignKey(s => s.FabricId)
