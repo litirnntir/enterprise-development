@@ -6,15 +6,8 @@ namespace Fabrics.Domain.Repositories;
 /// <summary>
 /// Repository class for managing Provider entities.
 /// </summary>
-public class ProviderRepository : IRepository<Provider>
+public class ProviderRepository(FabricsDbContext _context) : IRepository<Provider>
 {
-    private readonly FabricsDbContext _context;
-
-    public ProviderRepository(FabricsDbContext context)
-    {
-        _context = context;
-    }
-
     /// <summary>
     /// Deletes a Provider entity by its ID.
     /// </summary>

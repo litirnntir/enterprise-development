@@ -6,15 +6,8 @@ namespace Fabrics.Domain.Repositories;
 /// <summary>
 /// Repository class for managing Factory entities.
 /// </summary>
-public class FabricRepository : IRepository<Factory>
+public class FabricRepository(FabricsDbContext _context) : IRepository<Factory>
 {
-    private readonly FabricsDbContext _context;
-
-    public FabricRepository(FabricsDbContext context)
-    {
-        _context = context;
-    }
-
     /// <summary>
     /// Deletes a Factory entity by its ID.
     /// </summary>

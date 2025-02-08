@@ -6,15 +6,8 @@ namespace Fabrics.Domain.Repositories;
 /// <summary>
 /// Repository class for managing Shipment entities.
 /// </summary>
-public class ShipmentRepository : IRepository<Shipment>
+public class ShipmentRepository(FabricsDbContext _context) : IRepository<Shipment>
 {
-    private readonly FabricsDbContext _context;
-
-    public ShipmentRepository(FabricsDbContext context)
-    {
-        _context = context;
-    }
-
     /// <summary>
     /// Deletes a Shipment entity by its ID.
     /// </summary>
