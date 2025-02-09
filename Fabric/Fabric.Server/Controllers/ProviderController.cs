@@ -16,6 +16,7 @@ public class ProviderController(IRepository<Provider> repository, IMapper mapper
     /// <returns>List of ProviderGetDto</returns>
     /// <response code="200">Request successful</response>
     [HttpGet]
+    [ProducesResponseType(typeof(IEnumerable<ProviderGetDto>), 200)]
     public async Task<ActionResult<IEnumerable<ProviderGetDto>>> Get()
     {
         var providers = await Task.FromResult(repository.GetAll());
@@ -31,6 +32,8 @@ public class ProviderController(IRepository<Provider> repository, IMapper mapper
     /// <response code="200">Request successful</response>
     /// <response code="404">Provider not found</response>
     [HttpGet("{id}")]
+    [ProducesResponseType(typeof(ProviderGetDto), 200)]
+    [ProducesResponseType(404)]
     public async Task<ActionResult<ProviderGetDto>> Get(int id)
     {
         var provider = await Task.FromResult(repository.GetById(id));
@@ -49,6 +52,7 @@ public class ProviderController(IRepository<Provider> repository, IMapper mapper
     /// <returns>The created provider</returns>
     /// <response code="201">Provider created successfully</response>
     [HttpPost]
+    [ProducesResponseType(typeof(ProviderGetDto), 201)]
     public async Task<ActionResult<ProviderGetDto>> Post([FromBody] ProviderPostDto dto)
     {
         var provider = mapper.Map<Provider>(dto);
@@ -66,6 +70,8 @@ public class ProviderController(IRepository<Provider> repository, IMapper mapper
     /// <response code="200">Request successful</response>
     /// <response code="404">Provider not found</response>
     [HttpPut("{id}")]
+    [ProducesResponseType(typeof(ProviderGetDto), 200)]
+    [ProducesResponseType(404)]
     public async Task<ActionResult<ProviderGetDto>> Put(int id, [FromBody] ProviderPostDto dto)
     {
         var provider = mapper.Map<Provider>(dto);
@@ -83,6 +89,8 @@ public class ProviderController(IRepository<Provider> repository, IMapper mapper
     /// <response code="200">Request successful</response>
     /// <response code="404">Provider not found</response>
     [HttpDelete("{id}")]
+    [ProducesResponseType(200)]
+    [ProducesResponseType(404)]
     public async Task<IActionResult> Delete(int id)
     {
         if (!repository.Delete(id)) return NotFound();

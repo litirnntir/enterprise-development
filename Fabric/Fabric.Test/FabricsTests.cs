@@ -4,13 +4,13 @@ public class FabricsTests : IClassFixture<FabricsFixture>
 {
     private readonly FabricsFixture _fixture;
 
-    public FabricsTests(FabricsFixture fixture)
-    { _fixture = fixture; }
+    public FabricsTests(FabricsFixture fixture) => _fixture = fixture;
+
     /// <summary>
-    /// First request: get information from one fabric.
+    /// Test for retrieving information from one fabric.
     /// </summary>
     [Fact]
-    public void FirstRequest()
+    public void GetFabricById()
     {
         var fixtureFabrics = _fixture.FixtureFabrics;
         var request = (from fabric in fixtureFabrics
@@ -18,11 +18,12 @@ public class FabricsTests : IClassFixture<FabricsFixture>
                        select fabric).ToList().Count();
         Assert.Equal(1, request);
     }
+
     /// <summary>
-    /// Second request: all providers who delivered goods during the given interval.
+    /// Test for retrieving providers who delivered goods in a specific time interval.
     /// </summary>
     [Fact]
-    public void SecondRequest()
+    public void GetProvidersByShipmentInterval()
     {
         var fixtureShipments = _fixture.FixtureShipments;
         var firstDate = new DateTime(2022, 5, 21);
@@ -32,11 +33,12 @@ public class FabricsTests : IClassFixture<FabricsFixture>
                        select shipment).ToList().Count();
         Assert.Equal(3, request);
     }
+
     /// <summary>
-    /// Third request: the number of fabrics that each providers works with.
+    /// Test for counting the number of fabrics each provider works with.
     /// </summary>
     [Fact]
-    public void ThirdRequest()
+    public void GetFabricCountPerProvider()
     {
         var shipments = _fixture.FixtureShipments;
         var fabrics = _fixture.FixtureFabrics;
@@ -55,11 +57,12 @@ public class FabricsTests : IClassFixture<FabricsFixture>
         Assert.Equal(1, request.First(r => r.provider.Id == 3).count);
         Assert.Equal(1, request.First(r => r.provider.Id == 1).count);
     }
+
     /// <summary>
-    /// Fourth request: information about the number of providers for each form of ownership of fabric.
+    /// Test for getting the number of providers per form of ownership of fabric.
     /// </summary>
     [Fact]
-    public void FourthRequest()
+    public void GetProviderCountByOwnershipForm()
     {
         var shipments = _fixture.FixtureShipments;
         var fabrics = _fixture.FixtureFabrics;
@@ -75,11 +78,12 @@ public class FabricsTests : IClassFixture<FabricsFixture>
                        }).ToList();
         Assert.Equal(2, request.First(x => x.Form == "ТОО").Count);
     }
+
     /// <summary>
-    /// Fifth request: top 5 of providers by the number of shipments
+    /// Test for retrieving the top 5 providers by the number of shipments.
     /// </summary>
     [Fact]
-    public void FifthRequest()
+    public void GetTop5ProvidersByShipmentCount()
     {
         var fixtureShipments = _fixture.FixtureShipments;
         var numbersOfProviders = (from shipment in fixtureShipments
@@ -95,11 +99,12 @@ public class FabricsTests : IClassFixture<FabricsFixture>
         var firstItem = request.First();
         Assert.Equal(2, firstItem.provider);
     }
+
     /// <summary>
-    /// Sixth request: information about providers who delivered the maximum quantity of goods during the given interval.
+    /// Test for retrieving providers who delivered the maximum quantity of goods in a specific time interval.
     /// </summary>
     [Fact]
-    public void SixthRequest()
+    public void GetProvidersByMaxGoodsDelivered()
     {
         var fixtureShipments = _fixture.FixtureShipments;
         var firstDate = new DateTime(2022, 5, 21);

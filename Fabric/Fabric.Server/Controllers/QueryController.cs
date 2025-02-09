@@ -3,6 +3,8 @@ using Fabrics.Domain;
 using Fabrics.Server.Dto;
 using Microsoft.AspNetCore.Mvc;
 
+namespace Fabrics.Server.Controllers;
+
 [Route("api/[controller]")]
 [ApiController]
 public class QueryController(IRepository<Shipment> shipmentRepository, IRepository<Provider> providerRepository, IRepository<Factory> fabricRepository) : ControllerBase
