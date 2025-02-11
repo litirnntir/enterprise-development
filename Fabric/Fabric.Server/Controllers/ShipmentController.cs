@@ -1,37 +1,46 @@
 using AutoMapper;
 using Fabrics.Domain;
+using Fabrics.Domain.Repositories;
 using Fabrics.Server.Dto;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 
 namespace Fabrics.Server.Controllers;
 
 [Route("api/[controller]")]
 [ApiController]
 public class ShipmentController(
-    ILogger<ShipmentController> logger,
-    IDbContextFactory<FabricsDbContext> contextFactory,
-    IMapper mapper
+    ILogger<ShipmentController> _logger,
+    IRepository<Shipment> _shipmentRepository,
+    IMapper _mapper
 ) : ControllerBase
 {
-    private readonly ILogger<ShipmentController> _logger = logger;
-    private readonly IDbContextFactory<FabricsDbContext> _contextFactory = contextFactory;
-    private readonly IMapper _mapper = mapper;
-
+    /// <summary>
+    /// Retrieves all shipments.
+    /// </summary>
+    /// <returns>List of ShipmentGetDto</returns>
+    /// <response code="200">Request successful</response>
     [HttpGet]
-    public async Task<IEnumerable<ShipmentGetDto>> Get()
+    [ProducesResponseType(typeof(IEnumerable<ShipmentGetDto>), 200)]
+    public ActionResult<IEnumerable<ShipmentGetDto>> Get()
     {
-        await using var context = await _contextFactory.CreateDbContextAsync();
         _logger.LogInformation("Retrieving all shipments.");
-        var shipments = await context.Shipments.ToListAsync();
-        return _mapper.Map<IEnumerable<ShipmentGetDto>>(shipments);
+        var shipments = _shipmentRepository.GetAll();
+        return Ok(_mapper.Map<IEnumerable<ShipmentGetDto>>(shipments));
     }
 
+    /// <summary>
+    /// Retrieves a shipment by ID.
+    /// </summary>
+    /// <param name="id">ID of the shipment</param>
+    /// <returns>The shipment with the specified ID</returns>
+    /// <response code="200">Request successful</response>
+    /// <response code="404">Shipment not found</response>
     [HttpGet("{id}")]
-    public async Task<ActionResult<ShipmentGetDto>> Get(int id)
+    [ProducesResponseType(typeof(ShipmentGetDto), 200)]
+    [ProducesResponseType(404)]
+    public ActionResult<ShipmentGetDto> Get(int id)
     {
-        await using var context = await _contextFactory.CreateDbContextAsync();
-        var shipment = await context.Shipments.FirstOrDefaultAsync(s => s.Id == id);
+        var shipment = _shipmentRepository.GetById(id);
         if (shipment == null)
         {
             _logger.LogInformation("Shipment not found: {id}", id);
@@ -40,25 +49,34 @@ public class ShipmentController(
         return Ok(_mapper.Map<ShipmentGetDto>(shipment));
     }
 
+    /// <summary>
+    /// Adds a new shipment.
+    /// </summary>
+    /// <param name="shipmentDto">The shipment data</param>
+    /// <returns>The created shipment</returns>
+    /// <response code="201">Shipment created successfully</response>
     [HttpPost]
-    public async Task<ActionResult<ShipmentGetDto>> Post([FromBody] ShipmentPostDto shipmentDto)
+    [ProducesResponseType(typeof(ShipmentGetDto), 201)]
+    public ActionResult<ShipmentGetDto> Post([FromBody] ShipmentPostDto shipmentDto)
     {
         var shipment = _mapper.Map<Shipment>(shipmentDto);
-
-        await using var context = await _contextFactory.CreateDbContextAsync();
-        await context.Shipments.AddAsync(shipment);
-        await context.SaveChangesAsync();
-
-        var result = _mapper.Map<ShipmentGetDto>(shipment);
-        return CreatedAtAction(nameof(Get), new { id = result.Id }, result);
+        var result = _shipmentRepository.Post(shipment);
+        return CreatedAtAction(nameof(Get), new { id = result?.Id }, _mapper.Map<ShipmentGetDto>(result));
     }
 
+    /// <summary>
+    /// Updates a shipment by ID.
+    /// </summary>
+    /// <param name="id">ID of the shipment</param>
+    /// <param name="shipmentDto">The updated shipment data</param>
+    /// <response code="204">Update successful</response>
+    /// <response code="404">Shipment not found</response>
     [HttpPut("{id}")]
-    public async Task<IActionResult> Put(int id, [FromBody] ShipmentPostDto shipmentDto)
+    [ProducesResponseType(204)]
+    [ProducesResponseType(404)]
+    public IActionResult Put(int id, [FromBody] ShipmentPostDto shipmentDto)
     {
-        await using var context = await _contextFactory.CreateDbContextAsync();
-        var existingShipment = await context.Shipments.FirstOrDefaultAsync(s => s.Id == id);
-
+        var existingShipment = _shipmentRepository.GetById(id);
         if (existingShipment == null)
         {
             _logger.LogInformation("Shipment not found: {id}", id);
@@ -66,27 +84,29 @@ public class ShipmentController(
         }
 
         _mapper.Map(shipmentDto, existingShipment);
-        context.Shipments.Update(existingShipment);
-        await context.SaveChangesAsync();
-
+        _shipmentRepository.Put(id, existingShipment);
         return NoContent();
     }
 
+    /// <summary>
+    /// Deletes a shipment by ID.
+    /// </summary>
+    /// <param name="id">ID of the shipment</param>
+    /// <response code="204">Deletion successful</response>
+    /// <response code="404">Shipment not found</response>
     [HttpDelete("{id}")]
-    public async Task<IActionResult> Delete(int id)
+    [ProducesResponseType(204)]
+    [ProducesResponseType(404)]
+    public IActionResult Delete(int id)
     {
-        await using var context = await _contextFactory.CreateDbContextAsync();
-        var shipment = await context.Shipments.FirstOrDefaultAsync(s => s.Id == id);
-
+        var shipment = _shipmentRepository.GetById(id);
         if (shipment == null)
         {
             _logger.LogInformation("Shipment not found: {id}", id);
             return NotFound();
         }
 
-        context.Shipments.Remove(shipment);
-        await context.SaveChangesAsync();
-
+        _shipmentRepository.Delete(id);
         return NoContent();
     }
 }
