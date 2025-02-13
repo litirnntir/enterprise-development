@@ -17,7 +17,6 @@ builder.Services.AddBlazorise(options => { options.Immediate = true; })
     .AddBootstrap5Providers()
     .AddFontAwesomeIcons();
 
-// Добавление MudBlazor
 builder.Services.AddMudServices();
 
 await builder.Build().RunAsync();

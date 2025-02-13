@@ -13,6 +13,8 @@ public class QueryController(IRepository<Shipment> shipmentRepository, IReposito
     /// Get all shipments by a specific provider.
     /// </summary>
     [HttpGet("shipments-by-provider")]
+    [ProducesResponseType(typeof(IEnumerable<ShipmentGetDto>), 200)]
+    [ProducesResponseType(400)]
     public async Task<ActionResult<IEnumerable<ShipmentGetDto>>> GetShipmentsByProvider(int providerId)
     {
         var shipments = await Task.FromResult(shipmentRepository.GetAll());
@@ -34,6 +36,8 @@ public class QueryController(IRepository<Shipment> shipmentRepository, IReposito
     /// Get all providers who supplied goods within a specific period, ordered by name.
     /// </summary>
     [HttpGet("providers-by-date")]
+    [ProducesResponseType(typeof(IEnumerable<ProviderGetDto>), 200)]
+    [ProducesResponseType(400)]
     public async Task<ActionResult<IEnumerable<ProviderGetDto>>> GetProvidersByDate(DateTime startDate, DateTime endDate)
     {
         if (startDate >= endDate)
@@ -61,6 +65,7 @@ public class QueryController(IRepository<Shipment> shipmentRepository, IReposito
     /// Get the count of unique fabrics served by each provider.
     /// </summary>
     [HttpGet("count-fabrics-by-provider")]
+    [ProducesResponseType(typeof(IEnumerable<object>), 200)]
     public async Task<ActionResult<IEnumerable<object>>> CountFabricsByProvider()
     {
         var shipments = await Task.FromResult(shipmentRepository.GetAll());
@@ -79,6 +84,7 @@ public class QueryController(IRepository<Shipment> shipmentRepository, IReposito
     /// Get the top 5 fabrics by shipment count.
     /// </summary>
     [HttpGet("top-5-fabrics")]
+    [ProducesResponseType(typeof(IEnumerable<object>), 200)]
     public async Task<ActionResult<IEnumerable<object>>> Top5FabricsByShipments()
     {
         var shipments = await Task.FromResult(shipmentRepository.GetAll());
@@ -99,6 +105,8 @@ public class QueryController(IRepository<Shipment> shipmentRepository, IReposito
     /// Get providers with the maximum quantity of goods supplied within a specified period.
     /// </summary>
     [HttpGet("max-quantity-providers-by-period")]
+    [ProducesResponseType(typeof(IEnumerable<object>), 200)]
+    [ProducesResponseType(400)]
     public async Task<ActionResult<IEnumerable<object>>> MaxProvidersByQuantity(DateTime startDate, DateTime endDate)
     {
         if (startDate >= endDate)

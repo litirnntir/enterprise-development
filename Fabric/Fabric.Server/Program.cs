@@ -19,7 +19,7 @@ builder.Services.AddScoped<IRepository<Shipment>, ShipmentRepository>();
 
 // Configure DbContext
 builder.Services.AddDbContextFactory<FabricsDbContext>(options =>
-    options.UseMySQL(builder.Configuration.GetConnectionString("Factory")!));
+    options.UseMySQL(builder.Configuration.GetConnectionString("MySQL")!));
 
 // Add controllers and Swagger
 builder.Services.AddControllers();

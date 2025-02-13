@@ -13,6 +13,9 @@ public class AnalyticsController : ControllerBase
     private readonly IRepository<Factory> _fabricRepository;
     private readonly IRepository<Shipment> _shipmentRepository;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="AnalyticsController"/> class.
+    /// </summary>
     public AnalyticsController(IRepository<Provider> providerRepository, IRepository<Factory> fabricRepository, IRepository<Shipment> shipmentRepository)
     {
         _providerRepository = providerRepository;
@@ -20,6 +23,10 @@ public class AnalyticsController : ControllerBase
         _shipmentRepository = shipmentRepository;
     }
 
+    /// <summary>
+    /// Retrieves the number of shipments grouped by the type of goods.
+    /// </summary>
+    /// <returns>List of shipments grouped by goods type.</returns>
     [HttpGet("shipments-by-goods-type")]
     [ProducesResponseType(typeof(IEnumerable<object>), 200)]
     public async Task<ActionResult<IEnumerable<object>>> GetShipmentsByGoodsType()
@@ -32,6 +39,10 @@ public class AnalyticsController : ControllerBase
         return Ok(result);
     }
 
+    /// <summary>
+    /// Retrieves the average number of goods shipped by each provider.
+    /// </summary>
+    /// <returns>List of providers with their average shipped goods.</returns>
     [HttpGet("average-goods-by-provider")]
     [ProducesResponseType(typeof(IEnumerable<object>), 200)]
     public async Task<ActionResult<IEnumerable<object>>> GetAverageGoodsByProvider()
@@ -50,6 +61,10 @@ public class AnalyticsController : ControllerBase
         return Ok(result);
     }
 
+    /// <summary>
+    /// Retrieves the top 10 factories by the number of shipments received.
+    /// </summary>
+    /// <returns>List of top 10 factories with shipment count.</returns>
     [HttpGet("top-fabrics-by-shipments")]
     [ProducesResponseType(typeof(IEnumerable<object>), 200)]
     public async Task<ActionResult<IEnumerable<object>>> GetTopFabricsByShipments()
@@ -70,6 +85,10 @@ public class AnalyticsController : ControllerBase
         return Ok(result);
     }
 
+    /// <summary>
+    /// Retrieves the total area of factories grouped by ownership form.
+    /// </summary>
+    /// <returns>List of ownership forms with their total area.</returns>
     [HttpGet("total-area-by-ownership")]
     [ProducesResponseType(typeof(IEnumerable<object>), 200)]
     public async Task<ActionResult<IEnumerable<object>>> GetTotalAreaByOwnership()
@@ -82,6 +101,10 @@ public class AnalyticsController : ControllerBase
         return Ok(result);
     }
 
+    /// <summary>
+    /// Retrieves the top 5 most active providers based on the total number of goods shipped.
+    /// </summary>
+    /// <returns>List of top 5 active providers.</returns>
     [HttpGet("most-active-providers")]
     [ProducesResponseType(typeof(IEnumerable<object>), 200)]
     public async Task<ActionResult<IEnumerable<object>>> GetMostActiveProviders()

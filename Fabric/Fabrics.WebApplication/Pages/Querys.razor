@@ -13,8 +13,9 @@
             </div>
         </div>
         <div class="button-container">
-            <MudButton Color="MudBlazor.Color.Primary" OnClick="@(() => ClickHandler(1))">Get result</MudButton>
-            <MudButton Color="MudBlazor.Color.Error" OnClick="@(() => ClearTask(1))">Clear</MudButton>
+            
+            <button type="submit" class="btn btn-success" @onclick="@(() => ClickHandler(1))">Get result</button>
+            <button type="button" class="btn btn-secondary" @onclick="@(() => ClearTask(1))">Clear</button>
         </div>
         <div class="table-container">
             @if (shipments != null)
@@ -61,8 +62,8 @@
             </div>
         </div>
         <div class="button-container">
-            <MudButton Color="MudBlazor.Color.Primary" OnClick="@(() => ClickHandler(2))">Get result</MudButton>
-            <MudButton Color="MudBlazor.Color.Error" OnClick="@(() => ClearTask(2))">Clear</MudButton>
+            <button type="submit" class="btn btn-success" @onclick="@(() => ClickHandler(2))">Get result</button>
+            <button type="button" class="btn btn-secondary" @onclick="@(() => ClearTask(2))">Clear</button>
         </div>
         <div class="table-container">
             @if (providers != null)
@@ -111,20 +112,12 @@
             switch (taskId)
             {
                 case 1:
-                    shipments = new List<ShipmentGetDto>
-                    {
-                        new ShipmentGetDto { Id = 1, FabricId = 101, ProviderId = _providerId, Date = DateTime.Now, NumberOfGoods = 500 },
-                        new ShipmentGetDto { Id = 2, FabricId = 102, ProviderId = _providerId, Date = DateTime.Now, NumberOfGoods = 300 }
-                    };
+                    shipments = (List < ShipmentGetDto >) await Api.ShipmentsByProviderAsync(_providerId);
                     break;
                 case 2:
                     if (_startDate.HasValue && _endDate.HasValue)
                     {
-                        providers = new List<ProviderGetDto>
-                        {
-                            new ProviderGetDto { Id = 1, Name = "Provider A", TypeOfGoods = "Goods A", Address = "Address A" },
-                            new ProviderGetDto { Id = 2, Name = "Provider B", TypeOfGoods = "Goods B", Address = "Address B" }
-                        };
+                        providers = (List<ProviderGetDto>)await Api.ProvidersByDateAsync(_startDate, _endDate);
                     }
                     break;
             }
