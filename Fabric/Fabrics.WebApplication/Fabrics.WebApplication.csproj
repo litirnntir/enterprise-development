@@ -7,6 +7,10 @@
 	</PropertyGroup>
 
 	<ItemGroup>
+	  <Content Include="Properties\launchSettings.json" />
+	</ItemGroup>
+
+	<ItemGroup>
 		<OpenApiReference Include="API\swagger.json" CodeGenerator="NSwagCSharp" ClassName="ServerApi" />
 	</ItemGroup>
 	
